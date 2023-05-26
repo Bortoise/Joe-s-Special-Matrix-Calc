@@ -3,12 +3,13 @@
 //
 
 #include "globals.h"
+#include "lie_algebra.h"
 
-#ifndef MATRIXCALCCPP_LIEALGEBRA_H
-#define MATRIXCALCCPP_LIEALGEBRA_H
+#ifndef  JOEMATRIXCALC_UTILS_H
+#define JOEMATRIXCALC_UTILS_H
 
 namespace g = GiNaC;
 
 void print_matrix(g::matrix &m);
 
-#endif // MATRIXCALCCPP_LIEALGEBRA_H
+#endif // JOEMATRIXCALC_UTILS_H

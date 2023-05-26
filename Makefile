@@ -1,4 +1,4 @@
-#CFLAGS := -I/usr/local/include/ginac/ -fPIC # do not include -fPIC if static library
+CFLAGS := -fPIC -std=c++17# do not include -fPIC if static library
 LDFLAGS := -Wl,-Bstatic -lginac -lcln -lgmp -static-libstdc++ # this is more portable, but idk if it will work for all installs
 SOURCES=$(src/)
 HEADERS=$(src/headers/)
@@ -15,4 +15,4 @@ test.o: src/test.cpp out/library.so
 
 #LieAlgebra.a: LieAlgebra.o
 #	$(AR) $(ARFLAGS) $@ $^
-# If need static, change .so to .o and remove -shared flag
+# If need static, change .so to .a and remove -shared flag
