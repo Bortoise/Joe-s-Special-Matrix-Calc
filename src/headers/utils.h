@@ -1,13 +1,14 @@
 //
 // Created by cole on 15/05/23.
 //
-//#include "SymMatrix.h"
-#include <iostream>
-#include <ginac/matrix.h>
+
+#include "globals.h"
 
 #ifndef MATRIXCALCCPP_LIEALGEBRA_H
 #define MATRIXCALCCPP_LIEALGEBRA_H
 
-GiNaC::ex joe();
+namespace g = GiNaC;
+
+void print_matrix(g::matrix &m);
 
 #endif // MATRIXCALCCPP_LIEALGEBRA_H
