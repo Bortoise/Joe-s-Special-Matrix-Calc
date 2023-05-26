@@ -9,4 +9,6 @@
 #include <iostream>
 #include <ginac/matrix.h>
 
+GiNaC::ex joe();
+
 //#endif //MATRIXCALCCPP_LIEALGEBRA_H
