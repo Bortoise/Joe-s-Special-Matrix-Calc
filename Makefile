@@ -5,7 +5,7 @@ LieAlgebra.so: LieAlgebra.cpp
 	$(CXX) $(CFLAGS) -c -shared -o $@ $^ $(LDFLAGS)
 
 test.o: test.cpp LieAlgebra.so
-	$(CXX) $(CFLAGS) -o $@ $^ LieAlgebra.so $(LDFLAGS)
+	$(CXX) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 
 #LieAlgebra.a: LieAlgebra.o
