@@ -4,11 +4,22 @@ SOURCES=$(src/)
 HEADERS=$(src/headers/)
 
 #Makefile Targets
-library.so: src/utils.cpp
-	$(CXX) $(CFLAGS) -c -shared -o $@ $^ $(LDFLAGS)
-	mv $@ out/$@
+out/lie_algebra.o: src/lie_algebra.cpp
+	$(CXX) $(CFLAGS) -c -o $@ $^ $(LDFLAGS)
+#	 mv $@ out/$@
 
-test.o: src/test.cpp out/library.so
+out/lin_alg.o: src/lin_alg.cpp
+	$(CXX) $(CFLAGS) -c -o $@ $^ $(LDFLAGS)
+	
+out/utils.o: src/utils.cpp
+	$(CXX) $(CFLAGS) -c -o $@ $^ $(LDFLAGS)
+
+library.a: out/utils.o out/lie_algebra.o out/lin_alg.o
+# $(CXX) $(CFLAGS) -c -shared -o $@ $^ $(LDFLAGS)
+# mv $@ out/$@
+	ar rcs $@ $^ # We need to change this to get a shared library if matlab wants it
+
+test.o: src/test.cpp library.a
 	$(CXX) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 	mv $@ out/$@
 
