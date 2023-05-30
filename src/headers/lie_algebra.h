@@ -3,6 +3,7 @@
 #ifndef JOEMATRIXCALC_LIEALGEBRA_H
 #define JOEMATRIXCALC_LIEALGEBRA_H
 
+/** Lie subalgebra of sl(n) */
 class lie_algebra {
 
     private:
@@ -15,13 +16,20 @@ class lie_algebra {
         std::optional< lie_algebra* > centralizer;
 
     public:
-        /** Lie subalgebra of sl(n). */
-        lie_algebra(std::vector< g::matrix > &generators, bool basis=true); //algebra from generators (set basis to false if going from set of generators)
+        /** Constructor for lie_algebra.
+         *
+         * @param generators generators of your lie_algebra OR basis if you set basis=true
+         * @param basis set basis=true if you are giving a basis in generators, instead of a generating set to save yourself time
+         */
+        lie_algebra(std::vector< g::matrix > &generators, bool basis=false); //algebra from generators (set basis to false if going from set of generators)
 
+        /** Returns a (shallow) copy of the basis. */
         std::vector<g::matrix> get_basis();
+        /** Returns sl_size. */
         int get_sl_size();
+        /** Returns dim = basis.size() */
         int get_dim();
-        
+
         lie_algebra compute_normalizer(); // Computes the normalizer of the algebra in sl(n)
         lie_algebra compute_centralizer(); // Computes the centralizer of the algebra in sl(n)
         lie_algebra bracket_with_sl( std::vector< g::matrix > &generators); // Returns [L, sl(n)]
