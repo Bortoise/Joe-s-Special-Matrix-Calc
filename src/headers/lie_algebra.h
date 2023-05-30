@@ -1,24 +1,25 @@
 #include "globals.h"
 
-#ifndef  JOEMATRIXCALC_LIEALGEBRA_H
+#ifndef JOEMATRIXCALC_LIEALGEBRA_H
 #define JOEMATRIXCALC_LIEALGEBRA_H
 
 class lie_algebra {
+
     private:
-        std::vector< g::matrix* > basis;
+        int sl_size; /** Which sl(n) you're working in */
+        int dim; /** Dimension of the Lie algebra */
+        std::vector< g::matrix* > basis; /** Basis for sub algebra of sl(n).*/
         std::optional< std::vector< lie_algebra* > > derived_series;
         std::optional< std::vector< lie_algebra* > > lower_central_series;
         std::optional< lie_algebra* > normalizer;
         std::optional< lie_algebra* > centralizer;
-        int n; // sl(n) you're working in
-        int dim; // Dimension of the Lie algebra
 
     public:
-  
+        /** Lie subalgebra of sl(n). */
         lie_algebra(std::vector< g::matrix > &generators, bool basis=true); //algebra from generators (set basis to false if going from set of generators)
 
         std::vector<g::matrix> get_basis();
-        int get_n();
+        int get_sl_size();
         int get_dim();
         
         lie_algebra compute_normalizer(); // Computes the normalizer of the algebra in sl(n)
@@ -40,7 +41,6 @@ class lie_algebra {
 };
 
 //g::matrix bracket(g::matrix &m, g::matrix &n);
-lie_algebra algebra_from_generators( std::vector< g::matrix* > &generators); //TODO: handle matrix sizes
 lie_algebra bracket_lie_algebras( lie_algebra &algebra1, lie_algebra &algebra2, int dim); // < this seems studpid, why do we give it dim, it should be able to tell that from the matrices it's given
 lie_algebra sl_basis(int dim);
 std::vector< g::matrix* > is_linearly_ind(std::vector< g::matrix* > &matrices);
