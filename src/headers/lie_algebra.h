@@ -19,7 +19,7 @@ class lie_algebra {
         /** Constructor for lie_algebra.
          *
          * @param generators generators of your lie_algebra OR basis if you set basis=true
-         * @param basis set basis=true if you are giving a basis in generators, instead of a generating set to save yourself time
+         * @param basis set basis=true if you are giving a basis in generators, instead of a generating set to save yourself computation time
          */
         lie_algebra(std::vector< g::matrix > &generators, bool basis=false); //algebra from generators (set basis to false if going from set of generators)
 
@@ -30,12 +30,18 @@ class lie_algebra {
         /** Returns dim = basis.size() */
         int get_dim();
 
-        lie_algebra compute_normalizer(); // Computes the normalizer of the algebra in sl(n)
-        lie_algebra compute_centralizer(); // Computes the centralizer of the algebra in sl(n)
-        lie_algebra bracket_with_sl( std::vector< g::matrix > &generators); // Returns [L, sl(n)]
-        
-        lie_algebra compute_derived_subalgebra(); // Returns the derived subalgebra [L, L] 
+        /** Computes the normalizer in sl(n), N_{sl(n)}(L),  stores it in this.normalizer. */
+        lie_algebra compute_normalizer();
+        /** Computes the centralizer in sl(n), C_{sl(n)}(L), and stores it in this.centralizer. */
+        lie_algebra compute_centralizer();
+        /** Computes the bracket [L, sl(n)] */
+        lie_algebra bracket_with_sl();
+
+        /** Returns the derived subalgebra [L, L]. */
+        lie_algebra compute_derived_subalgebra();
+        /** Returns the derived series L^n=[L^{n-1}, L]. */
         std::vector< lie_algebra* > compute_derived_series(); // Returns the derived series of the algebra of the whole Lie algebra until it stabilizes
+        /** Returns the derived series L^(n)=[L^(n-1), L^(n-1)]. */
         std::vector< lie_algebra* > compute_lower_central_series(); // Returns the lower central series of the algebra of the whole Lie algebra until it stabilizes
 
         bool is_abelian(); // Checks if the algebra is abelian.
