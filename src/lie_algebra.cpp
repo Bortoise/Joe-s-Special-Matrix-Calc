@@ -1,7 +1,7 @@
 #include "headers/lie_algebra.h"
 
 // using namespace L;
-namespace se = std::experimental;
+// namespace se = std::experimental;
 
 lie_algebra::lie_algebra(std::vector< g::matrix > generators, bool _basis){
     //TODO: figure out how to make this->sl / if we want to
@@ -31,10 +31,10 @@ lie_algebra::lie_algebra(std::vector< g::matrix > generators, bool _basis){
     basis = new_basis; //TODO: maybe this can be replaced by just working with this.basis in every step
 
     // Instantiates the fields to None
-    derived_series = se::optional< std::vector< lie_algebra* > >();
-    lower_central_series = se::optional< std::vector< lie_algebra* > >();
-    normalizer = se::optional< lie_algebra* >();
-    centralizer = se::optional< lie_algebra* >();
+    derived_series = stdx::optional< std::vector< lie_algebra* > >();
+    lower_central_series = stdx::optional< std::vector< lie_algebra* > >();
+    normalizer = stdx::optional< lie_algebra* >();
+    centralizer = stdx::optional< lie_algebra* >();
 
 }
 
@@ -46,24 +46,24 @@ lie_algebra::~lie_algebra() { //TODO: figure out funky warnings in the destructo
             delete(D[i]);
         }
         delete(&D);
-    } catch(se::bad_optional_access) {}
+    } catch(stdx::bad_optional_access) {}
     delete(&derived_series);
     try {
         std::vector< lie_algebra* > L = lower_central_series.value();
         for(int i = 0; i < L.size(); i++) {
             delete(L[i]);
         }
-    } catch(se::bad_optional_access) {}
+    } catch(stdx::bad_optional_access) {}
     delete(&lower_central_series);
     try {
         lie_algebra* N = normalizer.value();
         delete(N);
-    } catch(se::bad_optional_access) {}
+    } catch(stdx::bad_optional_access) {}
     delete(&normalizer);
     try {
         lie_algebra* C = centralizer.value();
         delete(C);
-    } catch(se::bad_optional_access) {}
+    } catch(stdx::bad_optional_access) {}
     delete(&centralizer);
 }
 
@@ -82,7 +82,7 @@ lie_algebra lie_algebra::compute_centralizer() {
     for (int i = 1; i < this->dim; i++) { //TODO, only check on generating set? I.e. does this work mathematically and how to change the code to allow this
         out = compute_centralizer_element(this->basis[i], out); // Updates C_{sl(n)}(e_1,...,e_{i+1}) -> C_{C_{sl(n)}(e_1,...,e_i)}(e_{i+1})
     }
-    this->centralizer = se::optional< lie_algebra* >(&out); // Records the centralizer
+    this->centralizer = stdx::optional< lie_algebra* >(&out); // Records the centralizer
     return out;
 }
 
@@ -110,7 +110,7 @@ std::vector< lie_algebra* > lie_algebra::compute_derived_series() {
         derived_series_out.push_back(&D);
     }
 
-    this->derived_series = se::optional<std::vector< lie_algebra* >>(derived_series_out); // Records the derived series 
+    this->derived_series = stdx::optional<std::vector< lie_algebra* >>(derived_series_out); // Records the derived series 
     return std::vector(derived_series_out);
 }
 
@@ -129,7 +129,7 @@ std::vector< lie_algebra* > lie_algebra::compute_lower_central_series() {
         lower_central_series_out.push_back(&C);
     }
     
-    this->derived_series = se::optional<std::vector< lie_algebra* >>(lower_central_series_out); // Records the lower central series 
+    this->derived_series = stdx::optional<std::vector< lie_algebra* >>(lower_central_series_out); // Records the lower central series 
     return std::vector(lower_central_series_out);
 }
 
