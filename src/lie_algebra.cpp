@@ -4,6 +4,7 @@
 namespace se = std::experimental;
 
 lie_algebra::lie_algebra(std::vector< g::matrix > generators, bool _basis){
+    //TODO: figure out how to make this->sl / if we want to
     if (generators[0].rows() != generators[0].cols()) {
         throw "Input matrices are not square"; // make exception for
     }
@@ -85,6 +86,9 @@ lie_algebra lie_algebra::compute_centralizer() {
     return out;
 }
 
+lie_algebra lie_algebra::bracket_with_sl() { //Needs to be changed if we decide to go the other way about making sl a static member
+    return bracket_lie_algebras(*this, this->sl);
+}
 
 lie_algebra lie_algebra::compute_derived_subalgebra() {
     lie_algebra m = bracket_lie_algebras(*this, *this);
