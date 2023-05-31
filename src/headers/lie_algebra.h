@@ -7,12 +7,12 @@
 
 
 /** Lie subalgebra of sl(n) */
-class lie_algebra {
+class lie_algebra { // We always refer the lie algebra we are working with L.
 
     private:
         int sl_size; /** Which sl(n) you're working in */
         static lie_algebra sl; /** Copy of sl(n) */
-        int dim; /** Dimension of the Lie algebra */
+        int dim; /** Dimension of the lie algebra, L */
         std::vector< g::matrix > basis; /** Basis for sub algebra of sl(n).*/
         std::experimental::optional< std::vector< lie_algebra* > > derived_series;
         std::experimental::optional< std::vector< lie_algebra* > > lower_central_series;
@@ -65,6 +65,7 @@ class lie_algebra {
 
         bool equals(lie_algebra &other); // Checks if they are the same vector space. First checks the dimension. 
         bool contained_in(lie_algebra &other); // Checks if this is contained in the other.
+        bool contains(g::matrix x); // Checks if x is in L
 
         std::vector< g::matrix > extend_basis(std::vector< g::matrix > sl_basis); // Extends basis to all of sl(n) using sl_basis
 };
