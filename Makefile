@@ -4,14 +4,7 @@ SOURCES=$(src/)
 HEADERS=$(src/headers/)
 
 #Makefile Targets
-out/lie_algebra.o: src/lie_algebra.cpp
-	$(CXX) $(CFLAGS) -c -o $@ $^ $(LDFLAGS)
-#	 mv $@ out/$@
-
-out/lin_alg.o: src/lin_alg.cpp
-	$(CXX) $(CFLAGS) -c -o $@ $^ $(LDFLAGS)
-	
-out/utils.o: src/utils.cpp
+out/%.o: src/%.cpp
 	$(CXX) $(CFLAGS) -c -o $@ $^ $(LDFLAGS)
 
 library.a: out/utils.o out/lie_algebra.o out/lin_alg.o
@@ -23,6 +16,8 @@ test.o: src/test.cpp library.a
 	$(CXX) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 	mv $@ out/$@
 
+.PHONY: all
+all: out/utils.o out/lin_alg.o out/lie_algebra.o library.a
 
 #LieAlgebra.a: LieAlgebra.o
 #	$(AR) $(ARFLAGS) $@ $^
