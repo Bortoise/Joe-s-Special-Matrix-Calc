@@ -37,13 +37,14 @@ lie_algebra::lie_algebra(std::vector< g::matrix > generators, bool _basis){
 
 }
 
-lie_algebra::~lie_algebra() {
+lie_algebra::~lie_algebra() { //TODO: figure out funky warnings in the destructor
     delete(&basis);
     try {
         std::vector< lie_algebra* > D = derived_series.value();
         for(int i = 0; i < D.size(); i++) {
             delete(D[i]);
         }
+        delete(&D);
     } catch(se::bad_optional_access) {}
     delete(&derived_series);
     try {
@@ -74,7 +75,15 @@ std::vector<g::matrix> lie_algebra::get_basis() {
     return v;
 }
 
-
+lie_algebra lie_algebra::compute_centralizer() {
+    // Let L have basis e_i.
+    lie_algebra out = compute_centralizer_element(this->basis[0], this->sl); // Sets out=C_{sl(n)}(e_1)
+    for (int i = 1; i < this->dim; i++) { //TODO, only check on generating set? I.e. does this work mathematically and how to change the code to allow this
+        out = compute_centralizer_element(this->basis[i], out); // Updates C_{sl(n)}(e_1,...,e_{i+1}) -> C_{C_{sl(n)}(e_1,...,e_i)}(e_{i+1})
+    }
+    this->centralizer = se::optional< lie_algebra* >(&out); // Records the centralizer
+    return out;
+}
 
 
 lie_algebra lie_algebra::compute_derived_subalgebra() {
@@ -126,4 +135,18 @@ bool lie_algebra::is_abelian() {
     int dim = N.get_dim();
     delete(&N);
     return dim;
+}
+
+
+
+
+lie_algebra compute_centralizer_element(g::matrix x, lie_algebra N) {
+    std::vector< g::matrix > basis = std::vector< g::matrix >();
+    std::vector< g::matrix > old_basis = N.get_basis();
+    for (std::vector< g::matrix >::iterator iter = old_basis.begin(); iter < old_basis.end(); iter++) {
+        if (lin_alg::bracket(*iter, x).is_zero_matrix()) {
+            basis.push_back(*iter);
+        }
+    }
+    return lie_algebra(basis, true);
 }

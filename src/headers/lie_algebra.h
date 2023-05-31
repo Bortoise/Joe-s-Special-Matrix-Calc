@@ -11,12 +11,15 @@ class lie_algebra {
 
     private:
         int sl_size; /** Which sl(n) you're working in */
+        static lie_algebra sl; /** Copy of sl(n) */
         int dim; /** Dimension of the Lie algebra */
         std::vector< g::matrix > basis; /** Basis for sub algebra of sl(n).*/
         std::experimental::optional< std::vector< lie_algebra* > > derived_series;
         std::experimental::optional< std::vector< lie_algebra* > > lower_central_series;
         std::experimental::optional< lie_algebra* > normalizer;
         std::experimental::optional< lie_algebra* > centralizer;
+
+
 
     public:
         /** Constructor for lie_algebra.
@@ -66,6 +69,15 @@ class lie_algebra {
         std::vector< g::matrix > extend_basis(std::vector< g::matrix > sl_basis); // Extends basis to all of sl(n) using sl_basis
 };
 
+
+/**
+ * Computes the centralizer of x in N, C_N(x).
+ *
+ * @param x A sl_size by sl_size matrix.
+ * @param N A lie-subalgebra of sl(sl_size).
+ * @return Returns C_N(x)
+ */
+lie_algebra compute_centralizer_element(g::matrix x, lie_algebra N);
 lie_algebra bracket_lie_algebras( lie_algebra const &algebra1, lie_algebra const &algebra2); // < this seems studpid, why do we give it dim, it should be able to tell that from the matrices it's given
 //lie_algebra sl_basis(int dim);
 //lie_algebra intersect(lie_algebra &lie_algebra1, lie_algebra &lie_algebra2);
