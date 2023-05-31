@@ -74,7 +74,7 @@ namespace lin_alg{
 
             pivot = 0;
             pivot_row = -1;
-            for (int j = i; j < mat_temp.rows(); j++){
+            for (int j = i; j < mat_temp.rows(); j++){          //TODO: FIX THIS CHOICE OF PIVOT, IT CANNOT START AT i IF THERE HAVE BEEN 0's.
                 // Check if the pivot is non-zero
                 if (!mat_temp(j,i).is_zero()){
                     mat_temp(j,i).print(g::print_latex(std::cout));
@@ -89,16 +89,10 @@ namespace lin_alg{
                 swap_rows(&mat_temp, i, pivot_row);
                 for (int j = i+1; j < mat_temp.rows(); j++){
                     // Subtract the ith row from the jth row
-                    std::cout << "Before:" << std::endl;
-                    utils::print_matrix(mat_temp);
+                    g::ex temp_first_ex = mat_temp(j,i);
                     for (int k = i; k < mat_temp.cols(); k++){ 
-                        std::cout << "(" << i << "," << j << "," << k << ")" << std::endl;
-                        std::cout << mat_temp(j,k) << mat_temp(j,k) << mat_temp(i,i) << mat_temp(i,k) << mat_temp(j,i) << std::endl;
-                        mat_temp.set(j,k,(mat_temp(j,k) * mat_temp(i,i)) - mat_temp(i,k) * mat_temp(j,i));
-                        std::cout << mat_temp(j,k) << std::endl;
+                        mat_temp.set(j,k,(mat_temp(j,k) * mat_temp(i,i)) - mat_temp(i,k) * temp_first_ex);
                     }
-                    std::cout << "After:" << std::endl;
-                    utils::print_matrix(mat_temp);
                 }
             }
         }
