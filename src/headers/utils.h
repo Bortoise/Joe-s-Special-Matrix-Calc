@@ -10,6 +10,8 @@
 
 namespace g = GiNaC;
 
-void print_matrix(g::matrix &m);
+namespace utils{
+    void print_matrix(g::matrix &m);
+}
 
 #endif // JOEMATRIXCALC_UTILS_H
