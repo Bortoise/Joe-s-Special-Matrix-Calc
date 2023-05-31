@@ -21,7 +21,8 @@ out/test.o: src/test.cpp out/library.a #out/library.a
 .PHONY: all test clear
 all: out/utils.o out/lin_alg.o out/lie_algebra.o out/library.a
 test: out/test.o
-clear: rm out/*
+clear:
+	rm out/*
 #LieAlgebra.a: LieAlgebra.o
 #	$(AR) $(ARFLAGS) $@ $^
 # If need static, change .so to .a and remove -shared flag
