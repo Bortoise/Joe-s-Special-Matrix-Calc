@@ -1,6 +1,26 @@
 #include <iostream>
 #include <vector>
-#include <experimental/optional>
+
+// see https://codereview.stackexchange.com/a/136373
+#pragma once
+
+#if __has_include(<optional>)
+
+#   include <optional>
+namespace stdx {
+  using namespace ::std;
+}
+#elif __has_include(<experimental/optional>)
+#   include <experimental/optional>
+namespace stdx {
+  using namespace ::std;
+  using namespace ::std::experimental;
+}
+
+#else
+#   error <experimental/optional> and <optional> not found
+#endif
+
 
 //GiNaC includes
 #include <ginac/matrix.h>

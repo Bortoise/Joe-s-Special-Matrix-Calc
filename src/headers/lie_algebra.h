@@ -14,10 +14,10 @@ class lie_algebra { // We always refer the lie algebra we are working with L.
         static lie_algebra sl; /** Copy of sl(n) */
         int dim; /** Dimension of the lie algebra, L */
         std::vector< g::matrix > basis; /** Basis for sub algebra of sl(n).*/
-        std::experimental::optional< std::vector< lie_algebra* > > derived_series;
-        std::experimental::optional< std::vector< lie_algebra* > > lower_central_series;
-        std::experimental::optional< lie_algebra* > normalizer;
-        std::experimental::optional< lie_algebra* > centralizer;
+        stdx::optional< std::vector< lie_algebra* > > derived_series;
+        stdx::optional< std::vector< lie_algebra* > > lower_central_series;
+        stdx::optional< lie_algebra* > normalizer;
+        stdx::optional< lie_algebra* > centralizer;
 
 
 
