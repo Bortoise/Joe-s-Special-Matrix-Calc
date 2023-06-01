@@ -97,9 +97,9 @@ namespace lin_alg{
             for (int j = numNonZeroCols; j < mat_temp.rows(); j++){
                 // Check if the pivot is non-zero
                 if (!mat_temp(j,i).is_zero()){
-                    std::cout << "Pivot " << i << " is: "; 
-                    mat_temp(j,i).print(g::print_latex(std::cout));
-                    std::cout << " at row " << j << " and column " << i << std::endl;
+                    // std::cout << "Pivot " << i << " is: "; 
+                    // mat_temp(j,i).print(g::print_latex(std::cout));
+                    // std::cout << " at row " << j << " and column " << i << std::endl;
                     pivot = mat_temp(j,i);
                     pivot_row = j;
                     break;
