@@ -1,4 +1,5 @@
 #include "globals.h"
+#include <algorithm>
 
 #ifndef JOEMATRIXCALC_LIN_ALG_H
 #define JOEMATRIXCALC_LIN_ALG_H
