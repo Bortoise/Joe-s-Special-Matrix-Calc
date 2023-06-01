@@ -139,8 +139,8 @@ std::vector< lie_algebra* > lie_algebra::compute_lower_central_series() {
 
 bool lie_algebra::is_abelian() {
     lie_algebra N = this->compute_derived_subalgebra();
-    int dim = N.get_dim();
-    return dim == 0;
+    int derived_dim = N.get_dim();
+    return derived_dim == 0;
 }
 
 
