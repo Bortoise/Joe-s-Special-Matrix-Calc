@@ -26,28 +26,27 @@ namespace lin_alg{
             vectorized.push_back(vectorize(i));
         }
         unsigned int tr, tc;
-        tr = vectorized[0].size();
-        tc = vectorized.size();
-        g::matrix temp(tr, tc);
-        for(unsigned int j = 0; j < tr; j++){
-            for(unsigned int i = 0; i < tr; i++){
-           
-                temp.set(i,j, vectorized[i][j]);
+        tr = vectorized.size();
+        tc = vectorized[0].size();
+        g::matrix temp(tc, tr);
+       
+        for(unsigned int i = 0; i < tc; i++){
+            for(unsigned int j = 0; j < tr; j++){
+                temp.set(j,i, vectorized[i][j]);
             
             }
         }
-        utils::print_matrix(temp);
-        std::cout<<std::endl;
-        temp = gaussian_elimination(temp);
-        utils::print_matrix(temp);
-        std::cout<<std::endl;
-        std::vector< g::matrix >rtn;
 
+        temp = gaussian_elimination(temp);
+
+
+        std::vector< g::matrix > rtn; 
         int csd = 0;
         for(int i = 0; i < temp.cols(); i++){
             for(int j = csd; j < temp.rows(); j++){
-                if(!temp(i,j).is_zero()){
-                    rtn.push_back(matrices[j]);
+                if(!temp(j,i).is_zero()){
+                    csd++;
+                    rtn.push_back(matrices[i]);
                     break;
                 }
              
