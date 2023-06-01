@@ -35,7 +35,7 @@ namespace lin_alg{
                 temp.set(i,j, vectorized[i][j]);
             }
         }
-        temp = gaussian_elimination_columnless(temp);
+        temp = gaussian_elimination(temp);
         //find remaining rows
 
         //filter out remaining rows
