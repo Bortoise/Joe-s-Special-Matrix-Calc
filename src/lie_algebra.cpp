@@ -142,13 +142,16 @@ bool lie_algebra::is_abelian() {
 }
 
 
-
+/**
+ * TODO: FIGURE OUT THE PROPER INPUT REQUIREMENTS OR MAKE THIS A PRIVATE MEMBER OF lie_algebra
+ */
 // TODO: Fix this algorithm (need to take the kernel of ad(x):N->sl.
 //lie_algebra compute_centralizer_element(g::matrix x, lie_algebra N) {
 //    std::vector< g::matrix > basis = std::vector< g::matrix >();
 //    std::vector< g::matrix > old_basis = N.get_basis();
-//    for (std::vector< g::matrix >::iterator iter = old_basis.begin(); iter < old_basis.end(); iter++) {
-//
+//    for (int i = 0; i < old_basis.size(); i++) { // Forms the matrix of ad(x) acting on N
+//        old_basis[i] = lin_alg::bracket(x, old_basis[i]);
 //    }
+//    basis = lin_alg::devectorize(lin_alg::nullspace(lin_alg::basis_to_vectorized_matrix(old_basis)));
 //    return lie_algebra(basis, true);
 //}
