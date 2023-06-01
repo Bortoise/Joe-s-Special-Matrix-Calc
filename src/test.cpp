@@ -5,14 +5,21 @@
 #include "headers/lin_alg.h"
 
 
-
+std::vector < g::matrix  > hi(){
+    g::matrix a = {{0,0},{0,1}};
+    g::matrix b = {{0,1},{0,0}};
+    g::matrix c = {{0,0},{1,0}};
+    //g::matrix d = {{0,1}, {1,1}};
+    g::matrix d(2,2);
+    std::vector< g::matrix > v;
+    v.push_back(a);
+    v.push_back(b);
+    v.push_back(c);
+    v.push_back(d);
+    return v;
+}
 
 int main() {
-    g::symbol x("x");
-    g::symbol y("y");
-    g::matrix a = {{1,0},{0,0}};
-    g::matrix b = {{0,1},{0,0}};
-    g::exvector v = lin_alg::vectorize(a);
 
 
     //g::matrix ab = bracket(a, b);
@@ -22,13 +29,31 @@ int main() {
     //     std::cout<<std::endl;
     // }
 
-    g::matrix c = {{0,1, 3},{1,1, -2}, {-1, -1, 0}};
+    g::matrix c = 
+    {{0, 1, 1, 0},
+     {1, 1, 0, 0},
+     {0, 0, 0, 0},
+     {0, 0, 0, 1}};
     // std::cout << c.determinant() << std::endl;
-    g::matrix m = lin_alg::gaussian_elimination_columnless(c);
+    std::vector < g::matrix > v = hi();
+    (v[3]).print(g::print_python(std::cout));
+    utils::print_matrix(v[3]);
+    
+    std::vector <g::matrix> v2 = lin_alg::spanning_subsequence(v);
+
+    for(g::matrix i : v2){
+        utils::print_matrix(i);
+        std::cout<<std::endl;
+    }
+
+
+
+
+
     
         
     //utils::print_matrix(c);
-    utils::print_matrix(m);
+    //utils::print_matrix(m);
     //lin_alg::swap_rows(&m, 0, 1);
     //utils::print_matrix(m);
 
