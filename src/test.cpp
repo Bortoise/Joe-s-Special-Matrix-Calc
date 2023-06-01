@@ -24,7 +24,7 @@ int main() {
 
     g::matrix c = {{0,1, 3},{1,1, -2}, {-1, -1, 0}};
     // std::cout << c.determinant() << std::endl;
-    g::matrix m = lin_alg::gaussian_elimination_columnless(c);
+    g::matrix m = lin_alg::gaussian_elimination(c);
     
         
     //utils::print_matrix(c);
