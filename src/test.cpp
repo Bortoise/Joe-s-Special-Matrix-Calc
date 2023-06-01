@@ -28,7 +28,7 @@ int main() {
     
         
     //utils::print_matrix(c);
-    //utils::print_matrix(m);
+    utils::print_matrix(m);
     //lin_alg::swap_rows(&m, 0, 1);
     //utils::print_matrix(m);
 

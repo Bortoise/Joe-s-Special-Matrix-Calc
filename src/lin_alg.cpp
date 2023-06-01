@@ -59,8 +59,13 @@ namespace lin_alg{
 
         // Make a deep copy of the matrix to perform operations on
         g::matrix mat_temp = g::matrix(mat.rows(), mat.cols());    
+
+        // Initialize the pivot and pivot row
         g::ex pivot;
         int pivot_row;
+
+        // Initialize the number of non-zero columns, where to search for the pivot
+        int numNonZeroCols = 0;
 
         // Copies the matrix
         for (int i = 0; i < mat.rows(); i++){
@@ -74,11 +79,9 @@ namespace lin_alg{
 
             pivot = 0;
             pivot_row = -1;
-            for (int j = i; j < mat_temp.rows(); j++){          //TODO: FIX THIS CHOICE OF PIVOT, IT CANNOT START AT i IF THERE HAVE BEEN 0's.
+            for (int j = numNonZeroCols; j < mat_temp.rows(); j++){
                 // Check if the pivot is non-zero
                 if (!mat_temp(j,i).is_zero()){
-                    mat_temp(j,i).print(g::print_latex(std::cout));
-                    std::cout << std::endl;
                     pivot = mat_temp(j,i);
                     pivot_row = j;
                     break;
@@ -86,6 +89,8 @@ namespace lin_alg{
             }
 
             if (pivot_row != -1){
+                numNonZeroCols += 1; // Increment the number of non-zero columns to use as a starting point for the next column
+
                 swap_rows(&mat_temp, i, pivot_row);
                 for (int j = i+1; j < mat_temp.rows(); j++){
                     // Subtract the ith row from the jth row
