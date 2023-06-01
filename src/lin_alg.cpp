@@ -38,7 +38,7 @@ namespace lin_alg{
         }
         utils::print_matrix(temp);
         std::cout<<std::endl;
-        temp = gaussian_elimination_columnless(temp);
+        temp = gaussian_elimination(temp);
         utils::print_matrix(temp);
         std::cout<<std::endl;
         std::vector< g::matrix >rtn;
@@ -69,7 +69,7 @@ namespace lin_alg{
 
 
 
-    g::matrix gaussian_elimination_columnless(g::matrix const &mat){
+    g::matrix gaussian_elimination(g::matrix const &mat){
         // Perform gaussian elimination on a matrix without swapping any columns
 
         // Make a deep copy of the matrix to perform operations on

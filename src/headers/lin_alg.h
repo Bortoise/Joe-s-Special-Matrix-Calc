@@ -17,11 +17,10 @@ namespace lin_alg{
      *  If m has k rows then we need 0<= i,j < k.
      */
     void swap_rows(g::matrix* m, int i, int j);  
-    g::matrix gaussian_elimination_columnless(g::matrix const &matrices);
+    g::matrix gaussian_elimination(g::matrix const &matrices);
     std::vector< g::exvector > nullspace(g::matrix &m);
 
     g::exvector vectorize(g::matrix &m);
-    g::matrix devectorize(g::exvector &v, unsigned int rows, unsigned int cols); //need v.size()=rows*cols
     g::matrix basis_to_vectorized_matrix(std::vector< g::matrix > &basis);
 
 };

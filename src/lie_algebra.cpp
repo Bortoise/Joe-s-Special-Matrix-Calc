@@ -91,6 +91,9 @@ lie_algebra lie_algebra::bracket_with_sl() { //Needs to be changed if we decide 
 }
 
 lie_algebra lie_algebra::compute_derived_subalgebra() {
+    if(this->derived_series.has_value()) {
+        return *(this->derived_series.value()[0]);
+    }
     lie_algebra m = bracket_lie_algebras(*this, *this);
     return m;
 }
@@ -136,9 +139,8 @@ std::vector< lie_algebra* > lie_algebra::compute_lower_central_series() {
 
 bool lie_algebra::is_abelian() {
     lie_algebra N = this->compute_derived_subalgebra();
-    int dim = N.get_dim();
-    delete(&N);
-    return dim;
+    int derived_dim = N.get_dim();
+    return derived_dim == 0;
 }
 
 
@@ -152,6 +154,6 @@ bool lie_algebra::is_abelian() {
 //    for (int i = 0; i < old_basis.size(); i++) { // Forms the matrix of ad(x) acting on N
 //        old_basis[i] = lin_alg::bracket(x, old_basis[i]);
 //    }
-//    basis = lin_alg::devectorize(lin_alg::nullspace(lin_alg::basis_to_vectorized_matrix(old_basis)));
+//    basis = g::matrix(lin_alg::nullspace(lin_alg::basis_to_vectorized_matrix(old_basis)));
 //    return lie_algebra(basis, true);
 //}
