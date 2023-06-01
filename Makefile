@@ -1,5 +1,11 @@
 CFLAGS :=  -std=c++17 #-fPIC # do not include -fPIC if static library
-LDFLAGS := -Wl,-Bstatic -lginac -lcln -lgmp -static-libstdc++ # this is more portable, but idk if it will work for all installs
+LDFLAGS := -lginac -lcln -lgmp -static-libstdc++ # this is more portable, but idk if it will work for all installs
+
+UNAME := $(shell uname)
+ifneq ($(UNAME),Darwin)
+	LDFLAGS += -Wl,-Bstatic
+endif
+
 SOURCES=$(src/)
 HEADERS=$(src/headers/)
 
