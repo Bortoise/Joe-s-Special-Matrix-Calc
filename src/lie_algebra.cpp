@@ -143,14 +143,12 @@ bool lie_algebra::is_abelian() {
 
 
 
-
-lie_algebra compute_centralizer_element(g::matrix x, lie_algebra N) {
-    std::vector< g::matrix > basis = std::vector< g::matrix >();
-    std::vector< g::matrix > old_basis = N.get_basis();
-    for (std::vector< g::matrix >::iterator iter = old_basis.begin(); iter < old_basis.end(); iter++) {
-        if (lin_alg::bracket(*iter, x).is_zero_matrix()) {
-            basis.push_back(*iter);
-        }
-    }
-    return lie_algebra(basis, true);
-}
+// TODO: Fix this algorithm (need to take the kernel of ad(x):N->sl.
+//lie_algebra compute_centralizer_element(g::matrix x, lie_algebra N) {
+//    std::vector< g::matrix > basis = std::vector< g::matrix >();
+//    std::vector< g::matrix > old_basis = N.get_basis();
+//    for (std::vector< g::matrix >::iterator iter = old_basis.begin(); iter < old_basis.end(); iter++) {
+//
+//    }
+//    return lie_algebra(basis, true);
+//}
