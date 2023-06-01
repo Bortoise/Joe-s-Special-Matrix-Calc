@@ -152,6 +152,6 @@ bool lie_algebra::is_abelian() {
 //    for (int i = 0; i < old_basis.size(); i++) { // Forms the matrix of ad(x) acting on N
 //        old_basis[i] = lin_alg::bracket(x, old_basis[i]);
 //    }
-//    basis = lin_alg::devectorize(lin_alg::nullspace(lin_alg::basis_to_vectorized_matrix(old_basis)));
+//    basis = g::matrix(lin_alg::nullspace(lin_alg::basis_to_vectorized_matrix(old_basis)));
 //    return lie_algebra(basis, true);
 //}
