@@ -82,6 +82,9 @@ namespace lin_alg{
             for (int j = numNonZeroCols; j < mat_temp.rows(); j++){
                 // Check if the pivot is non-zero
                 if (!mat_temp(j,i).is_zero()){
+                    std::cout << "Pivot " << i << " is: "; 
+                    mat_temp(j,i).print(g::print_latex(std::cout));
+                    std::cout << " at row " << j << " and column " << i << std::endl;
                     pivot = mat_temp(j,i);
                     pivot_row = j;
                     break;
@@ -89,16 +92,16 @@ namespace lin_alg{
             }
 
             if (pivot_row != -1){
-                numNonZeroCols += 1; // Increment the number of non-zero columns to use as a starting point for the next column
-
-                swap_rows(&mat_temp, i, pivot_row);
-                for (int j = i+1; j < mat_temp.rows(); j++){
+                swap_rows(&mat_temp, numNonZeroCols, pivot_row);
+                for (int j = numNonZeroCols+1; j < mat_temp.rows(); j++){
                     // Subtract the ith row from the jth row
                     g::ex temp_first_ex = mat_temp(j,i);
                     for (int k = i; k < mat_temp.cols(); k++){ 
-                        mat_temp.set(j,k,(mat_temp(j,k) * mat_temp(i,i)) - mat_temp(i,k) * temp_first_ex);
+                        mat_temp.set(j,k,(mat_temp(j,k) * mat_temp(numNonZeroCols,i)) - mat_temp(i,k) * temp_first_ex);
                     }
                 }
+
+                numNonZeroCols += 1; // Increment the number of non-zero columns to use as a starting point for the next column
             }
         }
 
