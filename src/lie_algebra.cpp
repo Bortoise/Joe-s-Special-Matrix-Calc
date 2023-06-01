@@ -91,6 +91,9 @@ lie_algebra lie_algebra::bracket_with_sl() { //Needs to be changed if we decide 
 }
 
 lie_algebra lie_algebra::compute_derived_subalgebra() {
+    if(this->derived_series.has_value()) {
+        return *(this->derived_series.value()[0]);
+    }
     lie_algebra m = bracket_lie_algebras(*this, *this);
     return m;
 }
@@ -137,8 +140,7 @@ std::vector< lie_algebra* > lie_algebra::compute_lower_central_series() {
 bool lie_algebra::is_abelian() {
     lie_algebra N = this->compute_derived_subalgebra();
     int dim = N.get_dim();
-    delete(&N);
-    return dim;
+    return dim == 0;
 }
 
 
