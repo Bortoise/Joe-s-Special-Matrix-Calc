@@ -19,8 +19,6 @@ class lie_algebra { // We always refer the lie algebra we are working with L.
         stdx::optional< lie_algebra* > normalizer;
         stdx::optional< lie_algebra* > centralizer;
 
-
-
     public:
         /** Constructor for lie_algebra.
          *

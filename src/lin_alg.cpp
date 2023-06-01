@@ -11,7 +11,9 @@ namespace lin_alg{
             v.push_back(m.op(i));
         }
         return v;
+
     }
+
 
 
     g::matrix bracket(g::matrix &x, g::matrix &y){
@@ -30,15 +32,18 @@ namespace lin_alg{
         tc = vectorized[0].size();
         g::matrix temp(tc, tr);
        
-        for(unsigned int i = 0; i < tc; i++){
-            for(unsigned int j = 0; j < tr; j++){
+        for(unsigned int i = 0; i < vectorized.size(); i++){
+            for(unsigned int j = 0; j < vectorized[0].size(); j++){
                 temp.set(j,i, vectorized[i][j]);
             
             }
         }
 
+        utils::print_matrix(temp);
+        std::cout<<std::endl;
         temp = gaussian_elimination(temp);
-
+        utils::print_matrix(temp);
+        std::cout<<std::endl;
 
         std::vector< g::matrix > rtn; 
         int csd = 0;

@@ -3,22 +3,60 @@
 //
 #include "headers/utils.h"
 #include "headers/lin_alg.h"
+#include <random>
 
 
-std::vector < g::matrix  > hi(){
+void test_spanning_subsequence(){
+    g::symbol x("x");
     g::matrix a = {{0,0},{0,1}};
-    g::matrix b = {{0,1},{0,0}};
+    g::matrix b = {{0,x},{0,0}};
     g::matrix c = {{0,0},{1,0}};
-    g::matrix d = {{0,1}, {1,1}};
+    //g::matrix d = {{0,1}, {1,1}};
     //g::matrix d(2,2);
     std::vector< g::matrix > v;
     v.push_back(a);
     v.push_back(b);
-    v.push_back(d);
+    //v.push_back(d);
     v.push_back(c);
 
-    return v;
+        
+    std::vector <g::matrix> v2 = lin_alg::spanning_subsequence(v);
+
+    for(g::matrix i : v2){
+        utils::print_matrix(i);
+        std::cout<<std::endl;
+    }
 }
+
+
+void benchmark_spanning_subsequence(){
+
+    std::srand(1984);
+
+    std::vector<g::matrix > v;
+    //g::symbol x("x");
+    
+
+
+    for(int i = 0; i < 100; i++){
+        g::matrix m(4,4);
+        for(int i = 0; i < 4; i++){
+            for(int j = 0; j < 4; j++){
+                m.set(i,j,std::rand()%10);
+
+            }
+        }
+        v.push_back(m);
+    }
+    //v[0].set(2,3,x);
+
+    v = lin_alg::spanning_subsequence(v);
+    std::cout<<v.size();
+
+
+
+}
+
 
 int main() {
 
@@ -35,19 +73,9 @@ int main() {
      {1, 1, 0, 0},
      {0, 0, 0, 0},
      {0, 0, 0, 1}};
-    // std::cout << c.determinant() << std::endl;
-    std::vector < g::matrix > v = hi();
-    //(v[3]).print(g::print_python(std::cout));
-    //utils::print_matrix(v[3]);
 
-
-    
-    std::vector <g::matrix> v2 = lin_alg::spanning_subsequence(v);
-
-    for(g::matrix i : v2){
-        utils::print_matrix(i);
-        std::cout<<std::endl;
-    }
+    //test_spanning_subsequence();
+    benchmark_spanning_subsequence();
 
 
 
