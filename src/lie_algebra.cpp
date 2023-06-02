@@ -16,9 +16,8 @@ lie_algebra::lie_algebra(std::vector< g::matrix > generators, bool _basis){
             old_dim = static_cast<int>(new_basis.size());
             for (int i = 0; i < old_dim - 1; i++) {
                 for (int j = i + 1; j < old_dim; j++) {
-                    g::matrix& m = *new g::matrix();
-                    m = lin_alg::bracket(new_basis[i], new_basis[j]); // Do NOT try to make this one line, if you do it doesn't work for some reason
-                    new_basis.push_back(m);
+                    // Do NOT try to make this one line, if you do it doesn't work for some reason
+                    new_basis.push_back(lin_alg::bracket(new_basis[i], new_basis[j]));
                 }
             }
             new_basis = lin_alg::spanning_subsequence(new_basis);

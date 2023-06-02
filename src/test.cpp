@@ -3,13 +3,14 @@
 //
 #include "headers/utils.h"
 #include "headers/lin_alg.h"
+#include "headers/lie_algebra.h"
 #include <random>
 
 
 void test_spanning_subsequence(){
     g::symbol x("x");
     g::matrix a = {{0,0},{0,1}};
-    g::matrix b = {{0,x},{0,0}};
+    g::matrix b = {{0,1},{0,0}};
     g::matrix c = {{0,0},{1,0}};
     //g::matrix d = {{0,1}, {1,1}};
     //g::matrix d(2,2);
@@ -60,6 +61,17 @@ void benchmark_spanning_subsequence(){
 
 int main() {
 
+    g::matrix a = {{0,0},{0,1}};
+    g::matrix b = {{0,1},{0,0}};
+    g::matrix c = {{0,0},{1,0}};
+    g::matrix d = {{1,0},{0,0}};
+    std::vector< g::matrix > v;
+    v.push_back(a);
+    v.push_back(b);
+    v.push_back(c);
+    v.push_back(d);
+    lie_algebra l(v, false);
+
 
     //g::matrix ab = bracket(a, b);
     // print_matrix(ab);
@@ -68,7 +80,7 @@ int main() {
     //     std::cout<<std::endl;
     // }
 
-    g::matrix c = 
+    /*g::matrix c = 
     {{0, 1, 1, 0},
      {1, 1, 0, 0},
      {0, 0, 0, 0},
@@ -76,7 +88,7 @@ int main() {
 
     //test_spanning_subsequence();
     benchmark_spanning_subsequence();
-
+    */
 
 
 
