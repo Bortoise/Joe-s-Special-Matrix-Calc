@@ -10,8 +10,7 @@
 class lie_algebra { // We always refer the lie algebra we are working with L.
 
     private:
-        int sl_size; /** Which sl(n) you're working in */
-        static lie_algebra sl; /** Copy of sl(n) */
+        int sl_size;
         int dim; /** Dimension of the lie algebra, L */
         std::vector< g::matrix > basis; /** Basis for sub algebra of sl(n).*/
         stdx::optional< std::vector< lie_algebra* > > derived_series;
@@ -37,6 +36,8 @@ class lie_algebra { // We always refer the lie algebra we are working with L.
         int get_sl_size();
         /** Returns dim = basis.size() */
         int get_dim();
+
+        lie_algebra get_sl(int n);
 
         /** Computes the normalizer in sl(n), N_{sl(n)}(L),  stores it in this->normalizer. */
         lie_algebra compute_normalizer();
@@ -77,7 +78,7 @@ class lie_algebra { // We always refer the lie algebra we are working with L.
  * @return Returns C_N(x)
  */
 lie_algebra compute_centralizer_element(g::matrix x, lie_algebra N);
-lie_algebra bracket_lie_algebras( lie_algebra const &algebra1, lie_algebra const &algebra2); // < this seems studpid, why do we give it dim, it should be able to tell that from the matrices it's given
+lie_algebra bracket_lie_algebras(lie_algebra const &algebra1, lie_algebra const &algebra2);
 //lie_algebra sl_basis(int dim);
 //lie_algebra intersect(lie_algebra &lie_algebra1, lie_algebra &lie_algebra2);
 // (index, sampleMatrices) nilpotent_index(); //TODO: figure out what this means
