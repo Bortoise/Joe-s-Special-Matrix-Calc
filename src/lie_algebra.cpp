@@ -74,7 +74,7 @@ std::vector<g::matrix> lie_algebra::get_basis() {
 
 lie_algebra lie_algebra::compute_centralizer() {
     // Let L have basis e_i.
-    lie_algebra out = compute_centralizer_element(this->basis[0], this->sl); // Sets out=C_{sl(n)}(e_1)
+    lie_algebra out = compute_centralizer_element(this->basis[0], get_sl(this->get_sl_size())); // Sets out=C_{sl(n)}(e_1)
     for (int i = 1; i < this->dim; i++) { //TODO, only check on generating set? I.e. does this work mathematically and how to change the code to allow this
         out = compute_centralizer_element(this->basis[i], out); // Updates C_{sl(n)}(e_1,...,e_{i+1}) -> C_{C_{sl(n)}(e_1,...,e_i)}(e_{i+1})
     }
@@ -83,7 +83,7 @@ lie_algebra lie_algebra::compute_centralizer() {
 }
 
 lie_algebra lie_algebra::bracket_with_sl() { //Needs to be changed if we decide to go the other way about making sl a static member
-    return bracket_lie_algebras(*this, this->sl);
+    return bracket_lie_algebras(*this, get_sl(this->get_sl_size()));
 }
 
 lie_algebra lie_algebra::compute_derived_subalgebra() {
