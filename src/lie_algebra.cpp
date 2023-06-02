@@ -2,9 +2,7 @@
 
 // using namespace L;
 // namespace se = std::experimental;
-
-lie_algebra::lie_algebra(std::vector< g::matrix > generators, bool _basis){
-    //TODO: figure out how to make this->sl / if we want to
+lie_algebra::lie_algebra(std::vector<g::matrix> generators, bool _basis) {
     if (generators[0].rows() != generators[0].cols()) {
         throw "Input matrices are not square"; // make exception for
     }
@@ -16,7 +14,6 @@ lie_algebra::lie_algebra(std::vector< g::matrix > generators, bool _basis){
             old_dim = static_cast<int>(new_basis.size());
             for (int i = 0; i < old_dim - 1; i++) {
                 for (int j = i + 1; j < old_dim; j++) {
-                    // Do NOT try to make this one line, if you do it doesn't work for some reason
                     new_basis.push_back(lin_alg::bracket(new_basis[i], new_basis[j]));
                 }
             }
@@ -38,22 +35,22 @@ lie_algebra::lie_algebra(std::vector< g::matrix > generators, bool _basis){
 }
 
 lie_algebra::~lie_algebra() { //TODO: figure out funky warnings in the destructor
-    delete(&basis);
+    delete (&basis);
     try {
-        std::vector< lie_algebra* > D = derived_series.value();
-        for(int i = 0; i < D.size(); i++) {
-            delete(D[i]);
+        std::vector<lie_algebra *> D = derived_series.value();
+        for (auto & i : D) {
+            delete i;
         }
-        delete(&D);
-    } catch(stdx::bad_optional_access) {}
-    delete(&derived_series);
+        delete (&D);
+    } catch (stdx::bad_optional_access) {}
+    delete (&derived_series);
     try {
-        std::vector< lie_algebra* > L = lower_central_series.value();
-        for(int i = 0; i < L.size(); i++) {
-            delete(L[i]);
+        std::vector<lie_algebra *> L = lower_central_series.value();
+        for (auto & i : L) {
+            delete i;
         }
-    } catch(stdx::bad_optional_access) {}
-    delete(&lower_central_series);
+    } catch (stdx::bad_optional_access) {}
+    delete (&lower_central_series);
     try {
         lie_algebra* N = normalizer.value();
         delete(N);
@@ -135,12 +132,7 @@ std::vector< lie_algebra* > lie_algebra::compute_lower_central_series() {
     return std::vector(lower_central_series_out);
 }
 
-
-bool lie_algebra::is_abelian() {
-    lie_algebra N = this->compute_derived_subalgebra();
-    int derived_dim = N.get_dim();
-    return derived_dim == 0;
-}
+bool lie_algebra::is_abelian() { return this->compute_derived_subalgebra().get_dim() == 0; }
 
 
 /**
