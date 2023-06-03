@@ -128,11 +128,11 @@ namespace lin_alg{
     }
 
     int rank(g::matrix &matrix){
-        temp = gaussian_elimination(matrix);
+        g::matrix temp = gaussian_elimination(matrix);
         int rk = 0;
         int colVal = 0;
-        for(int i = 0; i < temp.row(); i++){
-            for(int j = colVal; j < temp.rows(); j++){
+        for(int i = 0; i < temp.rows(); i++){
+            for(int j = colVal; j < temp.cols(); j++){
                 if(!temp(i,j).is_zero()){
                     rk++;
                     colVal = j+1;
