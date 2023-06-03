@@ -158,6 +158,36 @@ std::vector< lie_algebra* > lie_algebra::compute_lower_central_series() {
 bool lie_algebra::is_abelian() { return this->compute_derived_subalgebra().get_dim() == 0; }
 
 
+bool lie_algebra::equals(lie_algebra &other) {
+    return other.contains(*this) && this->contains(other);
+}
+/** Returns true if N is contained in L. */
+bool lie_algebra::contains(lie_algebra &N) {
+    std::vector< g::matrix > vectors = std::vector< g::matrix >();
+
+    // Let e_1,...,e_n be a basis of L
+    std::vector< g::matrix > basis_1 = this->get_basis();
+    // Let f_1,...,f_m be a basis of N
+    std::vector< g::matrix > basis_2 = N.get_basis();
+    // Makes the list S=(e_1,...,e_n,f_1,...,f_m)
+    vectors.insert(vectors.end(), basis_1.begin(), basis_1.end());
+    vectors.insert(vectors.end(), basis_2.begin(), basis_2.end());
+
+    // Makes a matrix whose rows are the basis elements of L and N.
+    g::matrix M = lin_alg::basis_to_vectorized_matrix(vectors);
+
+    // N is a subset of L iff dim(L)=dim(L+N), but that is to say rank(e_1,...,e_n)
+    // = rank(S). Taking transposes this is what we actually verify.
+    return this->get_dim() == lin_alg::rank(M);
+}
+
+bool lie_algebra::contains_element(g::matrix x) {
+    std::vector< g::matrix > N_basis = std::vector< g::matrix >();
+    N_basis.push_back(x);
+    lie_algebra N = lie_algebra(N_basis, true);
+    return this->contains(N);
+}
+
 /**
  * TODO: FIGURE OUT THE PROPER INPUT REQUIREMENTS OR MAKE THIS A PRIVATE MEMBER OF lie_algebra
  */

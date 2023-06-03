@@ -63,8 +63,8 @@ class lie_algebra { // We always refer the lie algebra we are working with L.
         bool is_nilpotent(); // Checks if the algebra is nilpotent.
 
         bool equals(lie_algebra &other); // Checks if they are the same vector space. First checks the dimension. 
-        bool contained_in(lie_algebra &other); // Checks if this is contained in the other.
-        bool contains(g::matrix x); // Checks if x is in L
+        bool contains(lie_algebra &other); // Checks if this is contained in the other.
+        bool contains_element(g::matrix x); // Checks if x is in L
 
         std::vector< g::matrix > extend_basis(std::vector< g::matrix > sl_basis); // Extends basis to all of sl(n) using sl_basis
 };
