@@ -78,7 +78,7 @@ class lie_algebra { // We always refer the lie algebra we are working with L.
  * @return Returns C_N(x)
  */
 lie_algebra compute_centralizer_element(g::matrix x, lie_algebra N);
-lie_algebra bracket_lie_algebras(lie_algebra const &algebra1, lie_algebra const &algebra2);
+lie_algebra bracket_lie_algebras(lie_algebra &algebra1, lie_algebra &algebra2);
 //lie_algebra sl_basis(int dim);
 //lie_algebra intersect(lie_algebra &lie_algebra1, lie_algebra &lie_algebra2);
 // (index, sampleMatrices) nilpotent_index(); //TODO: figure out what this means

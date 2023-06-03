@@ -170,3 +170,14 @@ bool lie_algebra::is_abelian() { return this->compute_derived_subalgebra().get_d
 //    basis = g::matrix(lin_alg::nullspace(lin_alg::basis_to_vectorized_matrix(old_basis)));
 //    return lie_algebra(basis, true);
 //}
+
+lie_algebra bracket_lie_algebras(lie_algebra &algebra1, lie_algebra  &algebra2) {
+    std::vector< g::matrix > basis = std::vector< g::matrix >();
+    for (g::matrix v1 : algebra1.get_basis()) {
+        for (g::matrix v2 : algebra2.get_basis()) {
+            basis.push_back(lin_alg::bracket(v1, v2));
+        }
+    }
+    basis = lin_alg::spanning_subsequence(basis);
+    return {basis, true};
+}
