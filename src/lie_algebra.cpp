@@ -105,7 +105,8 @@ lie_algebra lie_algebra::compute_centralizer() {
 }
 
 lie_algebra lie_algebra::bracket_with_sl() { //Needs to be changed if we decide to go the other way about making sl a static member
-    return bracket_lie_algebras(*this, get_sl(this->get_sl_size()));
+    lie_algebra sl = get_sl(this->get_sl_size());
+    return bracket_lie_algebras(*this, sl);
 }
 
 lie_algebra lie_algebra::compute_derived_subalgebra() {
@@ -167,7 +168,11 @@ bool lie_algebra::is_abelian() { return this->compute_derived_subalgebra().get_d
 //    for (int i = 0; i < old_basis.size(); i++) { // Forms the matrix of ad(x) acting on N
 //        old_basis[i] = lin_alg::bracket(x, old_basis[i]);
 //    }
-//    basis = g::matrix(lin_alg::nullspace(lin_alg::basis_to_vectorized_matrix(old_basis)));
+//    g::matrix m = lin_alg::basis_to_vectorized_matrix(old_basis);
+//    std::vector< g::exvector > vec_null_basis = lin_alg::nullspace(m);
+//    for (g::exvector v : vec_null_basis) {
+//        basis.push_back(g::matrix(N.get_sl_size(), N.get_sl_size(), v)); //TODO: why you like this ginac
+//    }
 //    return lie_algebra(basis, true);
 //}
 
