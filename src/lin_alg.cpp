@@ -116,7 +116,7 @@ namespace lin_alg{
                     // Subtract the ith row from the jth row
                     g::ex temp_first_ex = mat_temp(j,i);
                     for (int k = i; k < mat_temp.cols(); k++){ 
-                        mat_temp.set(j,k,(mat_temp(j,k) * mat_temp(numNonZeroCols,i)) - mat_temp(i,k) * temp_first_ex);
+                        mat_temp.set(j,k,(mat_temp(j,k) * mat_temp(numNonZeroCols,i)) - mat_temp(numNonZeroCols,k) * temp_first_ex);
                     }
                 }
 
@@ -125,5 +125,23 @@ namespace lin_alg{
         }
 
         return mat_temp;
+    }
+
+    int rank(g::matrix &matrix){
+        temp = gaussian_elimination(matrix);
+        int rk = 0;
+        int colVal = 0;
+        for(int i = 0; i < temp.row(); i++){
+            for(int j = colVal; j < temp.rows(); j++){
+                if(!temp(i,j).is_zero()){
+                    rk++;
+                    colVal = j+1;
+                    break;
+                }
+             
+            }
+            
+        }
+        return rk;
     }
 };
