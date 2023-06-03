@@ -37,7 +37,7 @@ class lie_algebra { // We always refer the lie algebra we are working with L.
         /** Returns dim = basis.size() */
         int get_dim();
 
-        lie_algebra get_sl(int n);
+        static lie_algebra get_sl(int n);
 
         /** Computes the normalizer in sl(n), N_{sl(n)}(L),  stores it in this->normalizer. */
         lie_algebra compute_normalizer();

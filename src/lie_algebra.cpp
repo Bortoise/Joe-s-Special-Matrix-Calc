@@ -63,13 +63,35 @@ lie_algebra::~lie_algebra() { //TODO: figure out funky warnings in the destructo
     delete(&centralizer);
 }
 
+std::vector<g::matrix> lie_algebra::get_basis() {
+    std::vector< g::matrix > v (this->basis);
+    return v;
+}
+
 int lie_algebra::get_sl_size() { return this->sl_size; }
 
 int lie_algebra::get_dim() { return this->dim; }
 
-std::vector<g::matrix> lie_algebra::get_basis() { 
-    std::vector< g::matrix > v (this->basis);
-    return v;
+lie_algebra lie_algebra::get_sl(int n) {
+    std::vector<g::matrix> basis = std::vector<g::matrix>();
+    g::matrix m = g::matrix(n,n);
+    for (int i = 0; i < n-1; i++) {
+        for (int j = i+1; j < n; j++) {
+            m(i,j) = 1;
+            basis.push_back(m);
+            m(i,j) = 0;
+            m(j,i) = 1;
+            basis.push_back(m);
+            m(j,i) = 0;
+        }
+    }
+    m(0,0) = 1;
+    for (int i = 1; i < n-1; i++) {
+        m(i,i) = -1;
+        basis.push_back(m);
+        m(i,i) = 0;
+    }
+    return {basis, true};
 }
 
 lie_algebra lie_algebra::compute_centralizer() {
