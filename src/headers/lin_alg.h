@@ -18,6 +18,7 @@ namespace lin_alg{
      */
     void swap_rows(g::matrix* m, int i, int j);  
     g::matrix gaussian_elimination(g::matrix const &matrices);
+    int rank(g::matrix &m);
     std::vector< g::exvector > nullspace(g::matrix &m);
 
     g::exvector vectorize(g::matrix &m);
