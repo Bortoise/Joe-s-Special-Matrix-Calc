@@ -101,9 +101,6 @@ namespace lin_alg{
             for (int j = numNonZeroCols; j < mat_temp.rows(); j++){
                 // Check if the pivot is non-zero
                 if (!mat_temp(j,i).is_zero()){
-                    // std::cout << "Pivot " << i << " is: "; 
-                    // mat_temp(j,i).print(g::print_latex(std::cout));
-                    // std::cout << " at row " << j << " and column " << i << std::endl;
                     pivot = mat_temp(j,i);
                     pivot_row = j;
                     break;
@@ -128,9 +125,14 @@ namespace lin_alg{
     }
 
     int rank(g::matrix &matrix){
+        // Compute the gaussian elimination of a matrix and count the number of non-zero rows
         g::matrix temp = gaussian_elimination(matrix);
+
+        // Initialize the number of non-zero rows and the column value to start searching for non-zero values
         int rk = 0;
         int colVal = 0;
+        
+        // Go through each row starting from the column the previous row ended at and move until the next non-zero value is found.
         for(int i = 0; i < temp.rows(); i++){
             for(int j = colVal; j < temp.cols(); j++){
                 if(!temp(i,j).is_zero()){
@@ -138,10 +140,9 @@ namespace lin_alg{
                     colVal = j+1;
                     break;
                 }
-             
             }
-            
         }
+
         return rk;
     }
 };
