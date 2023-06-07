@@ -91,14 +91,14 @@ lie_algebra* lie_algebra::get_sl(int n) {
         basis.push_back(m);
         m(i,i) = 0;
     }
-    lie_algebra out = {basis, true};
-    return &out;
+    lie_algebra* out = new lie_algebra(basis, true);
+    return out;
 }
 
 lie_algebra* lie_algebra::compute_centralizer() {
     // Let L have basis e_i.
     lie_algebra* out = compute_centralizer_element(this->basis[0], get_sl(this->get_sl_size())); // Sets out=C_{sl(n)}(e_1)
-    for (int i = 1; i < this->dim; i++) { //TODO, only check on generating set? I.e. does this work mathematically and how to change the code to allow this
+    for (int i = 1; i < this->dim; i++) {
         out = compute_centralizer_element(this->basis[i], out); // Updates C_{sl(n)}(e_1,...,e_{i+1}) -> C_{C_{sl(n)}(e_1,...,e_i)}(e_{i+1})
     }
     this->centralizer = stdx::optional< lie_algebra* >(out); // Records the centralizer
@@ -109,7 +109,7 @@ lie_algebra* lie_algebra::compute_normalizer() {
     // Let L have basis {e_i, i<=r}. Set M_0 = sl(n) and M_{i+1}=N(x,L,M_i), where N(x,L,M) is the elements y of M such that ad(y) x in L.
     // It is clear that N(L)=\bigcap_{j<= r} N(x,L,sl(n))=M_r
     lie_algebra* out = this->compute_normalizer_element(this->basis[0], get_sl(this->get_sl_size())); // Sets out=N_{sl(n)}(e_1,L)=M_1
-    for (int i = 1; i < this->dim; i++) { //TODO, only check on generating set? I.e. does this work mathematically and how to change the code to allow this
+    for (int i = 1; i < this->dim; i++) {
         out = this->compute_normalizer_element(this->basis[i], out); // Updates out -> M_{i+1}
     }
     this->normalizer = stdx::optional< lie_algebra* >(out); // Records the normalizer
@@ -196,8 +196,8 @@ bool lie_algebra::contains(lie_algebra* N) {
 bool lie_algebra::contains_element(g::matrix x) {
     std::vector< g::matrix > N_basis = std::vector< g::matrix >();
     N_basis.push_back(x);
-    lie_algebra* N = new lie_algebra(N_basis, true);
-    return this->contains(N);
+    lie_algebra N = {N_basis, true};
+    return this->contains(&N);
 }
 
 std::vector< g::matrix > lie_algebra::extend_basis(lie_algebra* M) {
