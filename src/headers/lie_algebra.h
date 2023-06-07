@@ -72,7 +72,7 @@ class lie_algebra { // We always refer the lie algebra we are working with L.
         bool is_nilpotent(); // Checks if the algebra is nilpotent.
 
         /** Returns true if N and L are equal subalgebras of sl(n). */
-        bool equals(lie_algebra* other);
+        bool equals(lie_algebra* N);
         /** Returns true if N is contained in L. */
         bool contains(lie_algebra* N); // Checks if this is contained in the other.
         /** Returns true if x is an element of L. */

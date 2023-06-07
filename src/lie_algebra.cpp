@@ -174,8 +174,11 @@ std::vector< lie_algebra* > lie_algebra::compute_lower_central_series() {
 bool lie_algebra::is_abelian() { return this->compute_derived_subalgebra()->get_dim() == 0; }
 
 
-bool lie_algebra::equals(lie_algebra* other) {
-    return other->contains(this) && this->contains(other);
+bool lie_algebra::equals(lie_algebra* N) {
+    if (N->get_dim() != this->get_dim()) {
+        return false;
+    }
+    return N->contains(this) && this->contains(N);
 }
 
 bool lie_algebra::contains(lie_algebra* N) {
