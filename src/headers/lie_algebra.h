@@ -33,9 +33,9 @@ class lie_algebra { // We always refer the lie algebra we are working with L.
         /** Returns a (shallow) copy of the basis. */
         std::vector<g::matrix> get_basis();
         /** Returns sl_size. */
-        int get_sl_size() const;
+        [[nodiscard]] int get_sl_size() const;
         /** Returns dim = basis.size() */
-        int get_dim() const;
+        [[nodiscard]] int get_dim() const;
 
         static lie_algebra* get_sl(int n);
 
@@ -91,6 +91,7 @@ class lie_algebra { // We always refer the lie algebra we are working with L.
  * @return Returns C_N(x)
  */
 lie_algebra* compute_centralizer_element(g::matrix x, lie_algebra* N);
+/** Returns the bracket of two lie algebras of sl(n). */
 lie_algebra* bracket_lie_algebras(lie_algebra* algebra1, lie_algebra* algebra2);
 //lie_algebra sl_basis(int dim);
 //lie_algebra intersect(lie_algebra &lie_algebra1, lie_algebra &lie_algebra2);
