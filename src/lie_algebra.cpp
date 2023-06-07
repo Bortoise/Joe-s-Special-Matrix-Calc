@@ -72,7 +72,7 @@ int lie_algebra::get_sl_size() { return this->sl_size; }
 
 int lie_algebra::get_dim() { return this->dim; }
 
-lie_algebra lie_algebra::get_sl(int n) {
+lie_algebra* lie_algebra::get_sl(int n) {
     std::vector<g::matrix> basis = std::vector<g::matrix>();
     g::matrix m = g::matrix(n,n);
     for (int i = 0; i < n-1; i++) {
@@ -91,56 +91,57 @@ lie_algebra lie_algebra::get_sl(int n) {
         basis.push_back(m);
         m(i,i) = 0;
     }
-    return {basis, true};
+    lie_algebra out = {basis, true};
+    return &out;
 }
 
-lie_algebra lie_algebra::compute_centralizer() {
+lie_algebra* lie_algebra::compute_centralizer() {
     // Let L have basis e_i.
-    lie_algebra out = compute_centralizer_element(this->basis[0], get_sl(this->get_sl_size())); // Sets out=C_{sl(n)}(e_1)
+    lie_algebra* out = compute_centralizer_element(this->basis[0], get_sl(this->get_sl_size())); // Sets out=C_{sl(n)}(e_1)
     for (int i = 1; i < this->dim; i++) { //TODO, only check on generating set? I.e. does this work mathematically and how to change the code to allow this
         out = compute_centralizer_element(this->basis[i], out); // Updates C_{sl(n)}(e_1,...,e_{i+1}) -> C_{C_{sl(n)}(e_1,...,e_i)}(e_{i+1})
     }
-    this->centralizer = stdx::optional< lie_algebra* >(&out); // Records the centralizer
+    this->centralizer = stdx::optional< lie_algebra* >(out); // Records the centralizer
     return out;
 }
 
-lie_algebra lie_algebra::compute_normalizer() {
+lie_algebra* lie_algebra::compute_normalizer() {
     // Let L have basis {e_i, i<=r}. Set M_0 = sl(n) and M_{i+1}=N(x,L,M_i), where N(x,L,M) is the elements y of M such that ad(y) x in L.
     // It is clear that N(L)=\bigcap_{j<= r} N(x,L,sl(n))=M_r
-    lie_algebra out = this->compute_normalizer_element(this->basis[0], get_sl(this->get_sl_size())); // Sets out=N_{sl(n)}(e_1,L)=M_1
+    lie_algebra* out = this->compute_normalizer_element(this->basis[0], get_sl(this->get_sl_size())); // Sets out=N_{sl(n)}(e_1,L)=M_1
     for (int i = 1; i < this->dim; i++) { //TODO, only check on generating set? I.e. does this work mathematically and how to change the code to allow this
         out = this->compute_normalizer_element(this->basis[i], out); // Updates out -> M_{i+1}
     }
-    this->normalizer = stdx::optional< lie_algebra* >(&out); // Records the normalizer
+    this->normalizer = stdx::optional< lie_algebra* >(out); // Records the normalizer
     return out;
 }
 
-lie_algebra lie_algebra::bracket_with_sl() { //Needs to be changed if we decide to go the other way about making sl a static member
-    lie_algebra sl = get_sl(this->get_sl_size());
-    return bracket_lie_algebras(*this, sl);
+lie_algebra* lie_algebra::bracket_with_sl() { //Needs to be changed if we decide to go the other way about making sl a static member
+    lie_algebra* sl = get_sl(this->get_sl_size());
+    return bracket_lie_algebras(this, sl);
 }
 
-lie_algebra lie_algebra::compute_derived_subalgebra() {
+lie_algebra* lie_algebra::compute_derived_subalgebra() {
     if(this->derived_series.has_value()) {
-        return *(this->derived_series.value()[0]);
+        return this->derived_series.value()[0];
     }
-    lie_algebra m = bracket_lie_algebras(*this, *this);
+    lie_algebra* m = bracket_lie_algebras(this, this);
     return m;
 }
 
 std::vector< lie_algebra* > lie_algebra::compute_derived_series() {
     std::vector< lie_algebra* > derived_series_out = std::vector< lie_algebra* >();
     int old_dim = this->dim;
-    lie_algebra D = this->compute_derived_subalgebra(); // Sets L^1 = [L,L]
+    lie_algebra* D = this->compute_derived_subalgebra(); // Sets L^1 = [L,L]
     
-    while(D.get_dim() != old_dim) { // Terminates when L^n=L^{n+1}
-        derived_series_out.push_back(&D); 
-        old_dim = D.get_dim(); // Updates old_dim -> dim L^n
-        D = D.compute_derived_subalgebra(); // Updates D -> L^{n+1}
+    while(D->get_dim() != old_dim) { // Terminates when L^n=L^{n+1}
+        derived_series_out.push_back(D);
+        old_dim = D->get_dim(); // Updates old_dim -> dim L^n
+        D = D->compute_derived_subalgebra(); // Updates D -> L^{n+1}
     }
     
     if(derived_series_out.empty()) { // This deals with the case [L,L]=L
-        derived_series_out.push_back(&D);
+        derived_series_out.push_back(D);
     }
 
     this->derived_series = stdx::optional<std::vector< lie_algebra* >>(derived_series_out); // Records the derived series 
@@ -150,36 +151,36 @@ std::vector< lie_algebra* > lie_algebra::compute_derived_series() {
 std::vector< lie_algebra* > lie_algebra::compute_lower_central_series() {
     std::vector< lie_algebra* > lower_central_series_out = std::vector< lie_algebra* >();
     int old_dim = this->dim;
-    lie_algebra C = this->compute_derived_subalgebra(); // Sets L^(1) = [L,L]
+    lie_algebra* C = this->compute_derived_subalgebra(); // Sets L^(1) = [L,L]
     
-    while(C.get_dim() != old_dim) { // Terminates when L^(n)=L^(n+1)
-        lower_central_series_out.push_back(&C); 
-        old_dim = C.get_dim(); // Updates old_dim -> dim L^(n)
-        C = bracket_lie_algebras(C, *this); // Updates C -> L^(n+1)
+    while(C->get_dim() != old_dim) { // Terminates when L^(n)=L^(n+1)
+        lower_central_series_out.push_back(C);
+        old_dim = C->get_dim(); // Updates old_dim -> dim L^(n)
+        C = bracket_lie_algebras(C, this); // Updates C -> L^(n+1)
     }
 
     if(lower_central_series_out.empty()) { // This deals with the case [L,L]=L
-        lower_central_series_out.push_back(&C);
+        lower_central_series_out.push_back(C);
     }
     
     this->derived_series = stdx::optional<std::vector< lie_algebra* >>(lower_central_series_out); // Records the lower central series 
     return std::vector(lower_central_series_out);
 }
 
-bool lie_algebra::is_abelian() { return this->compute_derived_subalgebra().get_dim() == 0; }
+bool lie_algebra::is_abelian() { return this->compute_derived_subalgebra()->get_dim() == 0; }
 
 
-bool lie_algebra::equals(lie_algebra &other) {
-    return other.contains(*this) && this->contains(other);
+bool lie_algebra::equals(lie_algebra* other) {
+    return other->contains(this) && this->contains(other);
 }
 /** Returns true if N is contained in L. */
-bool lie_algebra::contains(lie_algebra &N) {
+bool lie_algebra::contains(lie_algebra* N) {
     std::vector< g::matrix > vectors = std::vector< g::matrix >();
 
     // Let e_1,...,e_n be a basis of L
     std::vector< g::matrix > basis_1 = this->get_basis();
     // Let f_1,...,f_m be a basis of N
-    std::vector< g::matrix > basis_2 = N.get_basis();
+    std::vector< g::matrix > basis_2 = N->get_basis();
     // Makes the list S=(e_1,...,e_n,f_1,...,f_m)
     vectors.insert(vectors.end(), basis_1.begin(), basis_1.end());
     vectors.insert(vectors.end(), basis_2.begin(), basis_2.end());
@@ -195,13 +196,13 @@ bool lie_algebra::contains(lie_algebra &N) {
 bool lie_algebra::contains_element(g::matrix x) {
     std::vector< g::matrix > N_basis = std::vector< g::matrix >();
     N_basis.push_back(x);
-    lie_algebra N = lie_algebra(N_basis, true);
+    lie_algebra* N = new lie_algebra(N_basis, true);
     return this->contains(N);
 }
 
-std::vector< g::matrix > lie_algebra::extend_basis(lie_algebra M) {
+std::vector< g::matrix > lie_algebra::extend_basis(lie_algebra* M) {
     std::vector< g::matrix > vec_list = std::vector< g::matrix >(this->basis);
-    for(g::matrix v : M.basis) {
+    for(g::matrix v : M->basis) {
         vec_list.push_back(v);
     }
     return lin_alg::spanning_subsequence(vec_list);
@@ -225,7 +226,7 @@ std::vector< g::matrix > lie_algebra::extend_basis(lie_algebra M) {
 //    return lie_algebra(basis, true);
 //}
 
-lie_algebra bracket_lie_algebras(lie_algebra &algebra1, lie_algebra  &algebra2) {
+lie_algebra* bracket_lie_algebras(lie_algebra &algebra1, lie_algebra  &algebra2) {
     std::vector< g::matrix > basis = std::vector< g::matrix >();
     for (g::matrix v1 : algebra1.get_basis()) {
         for (g::matrix v2 : algebra2.get_basis()) {
@@ -233,5 +234,6 @@ lie_algebra bracket_lie_algebras(lie_algebra &algebra1, lie_algebra  &algebra2) 
         }
     }
     basis = lin_alg::spanning_subsequence(basis);
-    return {basis, true};
+    lie_algebra* out = new lie_algebra(basis, true);
+    return out;
 }
