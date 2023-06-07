@@ -79,7 +79,7 @@ class lie_algebra { // We always refer the lie algebra we are working with L.
          * @param M A lie algebra containing L.
          * @return A basis of M extending the basis for L.
          */
-        std::vector< g::matrix > extend_basis(lie_algebra M); // Extends basis of L to a basis of M
+        std::vector< g::matrix > extend_basis(lie_algebra M);
 };
 
 

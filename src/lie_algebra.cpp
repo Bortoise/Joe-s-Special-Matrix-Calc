@@ -199,6 +199,14 @@ bool lie_algebra::contains_element(g::matrix x) {
     return this->contains(N);
 }
 
+std::vector< g::matrix > lie_algebra::extend_basis(lie_algebra M) {
+    std::vector< g::matrix > vec_list = std::vector< g::matrix >(this->basis);
+    for(g::matrix v : M.basis) {
+        vec_list.push_back(v);
+    }
+    return lin_alg::spanning_subsequence(vec_list);
+}
+
 /**
  * TODO: FIGURE OUT THE PROPER INPUT REQUIREMENTS OR MAKE THIS A PRIVATE MEMBER OF lie_algebra
  */
