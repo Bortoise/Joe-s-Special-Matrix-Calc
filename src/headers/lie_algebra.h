@@ -33,9 +33,9 @@ class lie_algebra { // We always refer the lie algebra we are working with L.
         /** Returns a (shallow) copy of the basis. */
         std::vector<g::matrix> get_basis();
         /** Returns sl_size. */
-        int get_sl_size();
+        int get_sl_size() const;
         /** Returns dim = basis.size() */
-        int get_dim();
+        int get_dim() const;
 
         static lie_algebra* get_sl(int n);
 

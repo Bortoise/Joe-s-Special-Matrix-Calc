@@ -68,9 +68,9 @@ std::vector<g::matrix> lie_algebra::get_basis() {
     return v;
 }
 
-int lie_algebra::get_sl_size() { return this->sl_size; }
+int lie_algebra::get_sl_size() const { return this->sl_size; }
 
-int lie_algebra::get_dim() { return this->dim; }
+int lie_algebra::get_dim() const { return this->dim; }
 
 lie_algebra* lie_algebra::get_sl(int n) {
     std::vector<g::matrix> basis = std::vector<g::matrix>();
