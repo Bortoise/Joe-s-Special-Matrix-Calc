@@ -60,48 +60,18 @@ void benchmark_spanning_subsequence(){
 
 
 int main() {
+    g::symbol x("x");
+    g::symbol y("y");
+    g::matrix a = {{0,x,0,1},{0,0,y,1},{0,0,0,0}};
+    std::cout << "Printing basis of nullspace of:" << std::endl;
+    utils::print_matrix(a);
+    std::cout << "Gaussian elimination:" << std::endl;
+    g::matrix b = lin_alg::gaussian_elimination(a);
+    utils::print_matrix(b);
+    std::cout << "Basis of nullspace:" << std::endl;
+    std::vector< g::exvector > v = lin_alg::nullspace(a);
+    utils::print_exvectors(v);
+    std::cout << "Dimension of nullspace: " << v.size() << std::endl;
 
-    g::matrix a = {{0,0},{0,1}};
-    g::matrix b = {{0,1},{0,0}};
-    g::matrix c = {{0,0},{1,0}};
-    g::matrix d = {{1,0},{0,0}};
-    std::vector< g::matrix > v;
-    v.push_back(a);
-    v.push_back(b);
-    v.push_back(c);
-    v.push_back(d);
-    lie_algebra l(v, false);
-
-
-    //g::matrix ab = bracket(a, b);
-    // print_matrix(ab);
-    // for(int i = 0; i < v.size(); i++){
-    //     v[i].print(g::print_python(std::cout));
-    //     std::cout<<std::endl;
-    // }
-
-    /*g::matrix c = 
-    {{0, 1, 1, 0},
-     {1, 1, 0, 0},
-     {0, 0, 0, 0},
-     {0, 0, 0, 1}};
-
-    //test_spanning_subsequence();
-    benchmark_spanning_subsequence();
-    */
-
-
-
-
-    
-        
-    //utils::print_matrix(c);
-    //utils::print_matrix(m);
-    //lin_alg::swap_rows(&m, 0, 1);
-    //utils::print_matrix(m);
-
-
-    //a.add(b).print(g::print_latex(std::cout));
-    //a.print(g::print_latex(std::cout));
     return 0;
 }

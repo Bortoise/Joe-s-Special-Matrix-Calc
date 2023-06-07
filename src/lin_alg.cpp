@@ -145,4 +145,92 @@ namespace lin_alg{
 
         return rk;
     }
+
+    std::vector< g::exvector > nullspace(g::matrix &matrix){
+        // Return a basis of the nullspace of the given matrix
+
+        // Compute the gaussian elimination of the matrix
+        g::matrix temp = gaussian_elimination(matrix);
+
+        // Initialize the nullspace basis        
+        std::vector< g::exvector > nullspace_basis;
+
+        // The nullspace of the matrix is the columns after the pivots
+        // minus e_i where i the i is the numNonZeroRows plus the number
+        // of columns past the last pivot. We then multiply the result
+        // such that there is no division.
+
+        // Find the number of columns before the nullspace starts
+        // and store the pivots and the columns they are in
+        std::vector< g::ex > pivots;
+        std::vector< int > pivot_cols;
+        int colVal = 0;
+        int rk = 0;
+        for(int i = 0; i < temp.rows(); i++){
+            for(int j = colVal; j < temp.cols(); j++){
+                if(!temp(i,j).is_zero()){
+                    rk++;
+                    colVal = j+1;
+                    pivot_cols.push_back(j);
+                    pivots.push_back(temp(i,j));
+                    break;
+                }
+            }
+        }
+
+        // Find the columns that are not pivots before the nullspace starts
+        // and add them to the nullspace basis
+        colVal = 0;
+        for(int i = 0; i < rk; i++){
+            for(int j = colVal; j < temp.cols(); j++){
+                if(!temp(i,j).is_zero()){
+                    colVal = j+1;
+                    break;
+                } else {
+                    // Generate the basis vector corresponding to the column
+                    g::exvector nullspace_vector;
+                    for (int k = 0; k < temp.cols(); k++){
+                        if (k == j){
+                            nullspace_vector.push_back(1);
+                        } else {
+                            nullspace_vector.push_back(0);
+                        }
+                    }
+                    // Add the basis vector to the nullspace basis
+                    nullspace_basis.push_back(nullspace_vector);
+                }
+            }
+        }
+
+        // Compute the product of the pivots
+        g::ex totalProduct = 1;
+        for (g::ex pivot : pivots){
+            totalProduct *= pivot;
+        }
+
+        for (int i = colVal; i < temp.cols(); i++){
+            // Initialize the nullspace vector
+            g::exvector nullspace_vector;
+            std::vector< int >::iterator pivot_it = pivot_cols.begin();
+            int pivot_ind = 0;
+            for (int j = 0; j < temp.cols(); j++){
+                // Add the correct multiplying factor times the element in the column
+                if (j == *pivot_it && pivot_it != pivot_cols.end()){
+                    nullspace_vector.push_back(temp(pivot_ind,i)*totalProduct/pivots[pivot_ind]);
+                    pivot_it++; pivot_ind++;
+                }
+                // Add the negative of the total product
+                else if (j == colVal){
+                    nullspace_vector.push_back(-totalProduct);
+                }
+                // Add 0's
+                else{
+                    nullspace_vector.push_back(0);
+                }
+            }
+            nullspace_basis.push_back(nullspace_vector);
+        }
+
+        return nullspace_basis;
+    }
 };
