@@ -73,5 +73,12 @@ int main() {
     utils::print_exvectors(v);
     std::cout << "Dimension of nullspace: " << v.size() << std::endl;
 
+    g::matrix c = {{0,0,1,1},{0,0,x,0},{1,2*y,x,0}};
+    g::matrix d = lin_alg::gaussian_elimination(c);
+    std::cout << "Printing gaussian elimination of:" << std::endl;
+    utils::print_matrix(c);
+    std::cout << "Gaussian elimination:" << std::endl;
+    utils::print_matrix(d);
+
     return 0;
 }
