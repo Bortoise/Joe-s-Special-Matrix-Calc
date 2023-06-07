@@ -71,9 +71,12 @@ class lie_algebra { // We always refer the lie algebra we are working with L.
         bool is_solvable(); // Checks if the algebra is solvable.
         bool is_nilpotent(); // Checks if the algebra is nilpotent.
 
-        bool equals(lie_algebra* other); // Checks if they are the same vector space. First checks the dimension.
-        bool contains(lie_algebra* other); // Checks if this is contained in the other.
-        bool contains_element(g::matrix x); // Checks if x is in L
+        /** Returns true if N and L are equal subalgebras of sl(n). */
+        bool equals(lie_algebra* other);
+        /** Returns true if N is contained in L. */
+        bool contains(lie_algebra* N); // Checks if this is contained in the other.
+        /** Returns true if x is an element of L. */
+        bool contains_element(g::matrix x);
 
         /** Extends the default basis for L to a basis for all of M, assuming L is contained in M.
          *

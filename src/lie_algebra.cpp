@@ -177,8 +177,11 @@ bool lie_algebra::is_abelian() { return this->compute_derived_subalgebra()->get_
 bool lie_algebra::equals(lie_algebra* other) {
     return other->contains(this) && this->contains(other);
 }
-/** Returns true if N is contained in L. */
+
 bool lie_algebra::contains(lie_algebra* N) {
+    if (N->get_dim() > this->get_dim()) {
+        return false;
+    }
     std::vector< g::matrix > vectors = std::vector< g::matrix >();
 
     // Let e_1,...,e_n be a basis of L
