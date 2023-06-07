@@ -74,7 +74,12 @@ class lie_algebra { // We always refer the lie algebra we are working with L.
         bool contains(lie_algebra &other); // Checks if this is contained in the other.
         bool contains_element(g::matrix x); // Checks if x is in L
 
-        std::vector< g::matrix > extend_basis(std::vector< g::matrix > sl_basis); // Extends basis to all of sl(n) using sl_basis
+        /** Extends the default basis for L to a basis for all of M, assuming L is contained in M.
+         *
+         * @param M A lie algebra containing L.
+         * @return A basis of M extending the basis for L.
+         */
+        std::vector< g::matrix > extend_basis(lie_algebra M); // Extends basis of L to a basis of M
 };
 
 
