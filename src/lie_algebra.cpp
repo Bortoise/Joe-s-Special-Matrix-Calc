@@ -73,6 +73,9 @@ int lie_algebra::get_sl_size() const { return this->sl_size; }
 int lie_algebra::get_dim() const { return this->dim; }
 
 lie_algebra* lie_algebra::get_sl(int n) {
+    if (lie_algebra::sl.has_value()) {
+        return lie_algebra::sl.value();
+    }
     std::vector<g::matrix> basis = std::vector<g::matrix>();
     g::matrix m = g::matrix(n,n);
     for (int i = 0; i < n-1; i++) {
@@ -92,6 +95,7 @@ lie_algebra* lie_algebra::get_sl(int n) {
         m(i,i) = 0;
     }
     lie_algebra* out = new lie_algebra(basis, true);
+    lie_algebra::sl = stdx::optional(out);
     return out;
 }
 
