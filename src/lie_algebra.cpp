@@ -173,6 +173,23 @@ std::vector< lie_algebra* > lie_algebra::compute_lower_central_series() {
 
 bool lie_algebra::is_abelian() { return this->compute_derived_subalgebra()->get_dim() == 0; }
 
+bool lie_algebra::is_solvable() {
+    if (derived_series.has_value()) { //If we computed the derived series we just check if the last term is 0
+        lie_algebra* ds = derived_series.value()[derived_series.value().size() - 1];
+        return ds->dim == 0;
+    }
+    // Otherwise we use Cartan's criterion and check if tr(L,[L,L]), and it suffices
+    //  to check this on a basis of L and of [L,L]
+    lie_algebra* da = compute_derived_subalgebra();
+    for (g::matrix a : basis) {
+        for (g::matrix b : da->basis) {
+            if (lin_alg::prod_trace(a,b).is_zero()) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
 
 bool lie_algebra::equals(lie_algebra* N) {
     if (N->get_dim() != this->get_dim()) {
