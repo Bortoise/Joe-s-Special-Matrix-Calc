@@ -115,9 +115,14 @@ lie_algebra* lie_algebra::compute_centralizer() {
 lie_algebra* lie_algebra::compute_normalizer() {
     // Let L have basis {e_i, i<=r}. Set M_0 = sl(n) and M_{i+1}=N(x,L,M_i), where N(x,L,M) is the elements y of M such that ad(y) x in L.
     // It is clear that N(L)=\bigcap_{j<= r} N(x,L,sl(n))=M_r
-    lie_algebra* out = this->compute_normalizer_element(this->basis[0], get_sl(this->get_sl_size())); // Sets out=N_{sl(n)}(e_1,L)=M_1
+
+    // Sets out=N_{sl(n)}(e_1,L)=M_1
+    lie_algebra* out = this->compute_normalizer_element(this->basis[0], get_sl(this->get_sl_size()));
     for (int i = 1; i < this->dim; i++) {
-        out = this->compute_normalizer_element(this->basis[i], out); // Updates out -> M_{i+1}
+        // Updates out -> M_{i+1}
+        lie_algebra* out_new = this->compute_normalizer_element(this->basis[i], out);
+        delete(out);
+        out = out_new;
     }
     this->normalizer = stdx::optional< lie_algebra* >(out); // Records the normalizer
     return out;
