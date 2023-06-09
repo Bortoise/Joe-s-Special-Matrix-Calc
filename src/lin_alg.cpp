@@ -244,4 +244,16 @@ namespace lin_alg{
 
         return nullspace_basis;
     }
+
+    g::ex prod_trace(g::matrix a, g::matrix b) {
+        unsigned int num_rows = a.rows();
+        unsigned int num_cols = a.cols();
+        g::ex out = g::ex();
+        for (int i = 0; i < num_rows; i++) {
+            for (int j = 0; j < num_cols; j++) {
+                out = g::add(out, g::mul(a(i,j),b(j,i)));
+            }
+        }
+        return out;
+    }
 };
