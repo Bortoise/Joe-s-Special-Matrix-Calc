@@ -62,7 +62,7 @@ lie_algebra::~lie_algebra() { //TODO: figure out funky warnings in the destructo
     } catch(stdx::bad_optional_access) {}
     delete(&centralizer);
 }
-/*
+
 std::vector<g::matrix> lie_algebra::get_basis() {
     std::vector< g::matrix > v (this->basis);
     return v;
@@ -218,31 +218,32 @@ std::vector< g::matrix > lie_algebra::extend_basis(lie_algebra* M) {
     }
     return lin_alg::spanning_subsequence(vec_list);
 }
-*/
+
 
 /**
  * TODO: FIGURE OUT THE PROPER INPUT REQUIREMENTS OR MAKE THIS A PRIVATE MEMBER OF lie_algebra
  */
 // TODO: Fix this algorithm (need to take the kernel of ad(x):N->sl.
-//lie_algebra compute_centralizer_element(g::matrix x, lie_algebra N) {
-//    std::vector< g::matrix > basis = std::vector< g::matrix >();
-//    std::vector< g::matrix > old_basis = N.get_basis();
-//    for (int i = 0; i < old_basis.size(); i++) { // Forms the matrix of ad(x) acting on N
-//        old_basis[i] = lin_alg::bracket(x, old_basis[i]);
-//    }
-//    g::matrix m = lin_alg::basis_to_vectorized_matrix(old_basis);
-//    std::vector< g::exvector > vec_null_basis = lin_alg::nullspace(m);
-//    for (g::exvector v : vec_null_basis) {
-//        basis.push_back(g::matrix(N.get_sl_size(), N.get_sl_size(), v)); //TODO: why you like this ginac
-//    }
-//    return lie_algebra(basis, true);
-//}
-/*
-
-lie_algebra* bracket_lie_algebras(lie_algebra &algebra1, lie_algebra  &algebra2) {
+lie_algebra* compute_centralizer_element(g::matrix x, lie_algebra *N) {
     std::vector< g::matrix > basis = std::vector< g::matrix >();
-    for (g::matrix v1 : algebra1.get_basis()) {
-        for (g::matrix v2 : algebra2.get_basis()) {
+    std::vector< g::matrix > old_basis = N->get_basis();
+    for (int i = 0; i < old_basis.size(); i++) { // Forms the matrix of ad(x) acting on N
+        old_basis[i] = lin_alg::bracket(x, old_basis[i]);
+    }
+    g::matrix m = lin_alg::basis_to_vectorized_matrix(old_basis);
+    std::vector< g::exvector > vec_null_basis = lin_alg::nullspace(m);
+    for (g::exvector v : vec_null_basis) {
+        basis.push_back(lin_alg::matricize(v, N->get_sl_size(), N->get_sl_size())); //TODO: why you like this ginac
+    }
+    lie_algebra* l = new lie_algebra(basis, true);
+    return l;
+}
+
+
+lie_algebra* bracket_lie_algebras(lie_algebra *algebra1, lie_algebra  *algebra2) {
+    std::vector< g::matrix > basis = std::vector< g::matrix >();
+    for (g::matrix v1 : algebra1->get_basis()) {
+        for (g::matrix v2 : algebra2->get_basis()) {
             basis.push_back(lin_alg::bracket(v1, v2));
         }
     }
@@ -250,4 +251,3 @@ lie_algebra* bracket_lie_algebras(lie_algebra &algebra1, lie_algebra  &algebra2)
     lie_algebra* out = new lie_algebra(basis, true);
     return out;
 }
-*/
