@@ -244,11 +244,6 @@ std::vector< g::matrix > lie_algebra::extend_basis(lie_algebra* M) {
     return lin_alg::spanning_subsequence(vec_list);
 }
 
-
-/**
- * TODO: FIGURE OUT THE PROPER INPUT REQUIREMENTS OR MAKE THIS A PRIVATE MEMBER OF lie_algebra
- */
-// TODO: Fix this algorithm (need to take the kernel of ad(x):N->sl.
 lie_algebra* compute_centralizer_element(g::matrix x, lie_algebra *N) {
     std::vector< g::matrix > basis = std::vector< g::matrix >();
     std::vector< g::matrix > old_basis = N->get_basis();
