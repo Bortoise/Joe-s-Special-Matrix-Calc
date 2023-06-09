@@ -62,7 +62,7 @@ lie_algebra::~lie_algebra() { //TODO: figure out funky warnings in the destructo
     } catch(stdx::bad_optional_access) {}
     delete(&centralizer);
 }
-
+/*
 std::vector<g::matrix> lie_algebra::get_basis() {
     std::vector< g::matrix > v (this->basis);
     return v;
@@ -203,6 +203,7 @@ bool lie_algebra::contains(lie_algebra* N) {
     return this->get_dim() == lin_alg::rank(M);
 }
 
+
 bool lie_algebra::contains_element(g::matrix x) {
     std::vector< g::matrix > N_basis = std::vector< g::matrix >();
     N_basis.push_back(x);
@@ -217,6 +218,7 @@ std::vector< g::matrix > lie_algebra::extend_basis(lie_algebra* M) {
     }
     return lin_alg::spanning_subsequence(vec_list);
 }
+*/
 
 /**
  * TODO: FIGURE OUT THE PROPER INPUT REQUIREMENTS OR MAKE THIS A PRIVATE MEMBER OF lie_algebra
@@ -235,6 +237,7 @@ std::vector< g::matrix > lie_algebra::extend_basis(lie_algebra* M) {
 //    }
 //    return lie_algebra(basis, true);
 //}
+/*
 
 lie_algebra* bracket_lie_algebras(lie_algebra &algebra1, lie_algebra  &algebra2) {
     std::vector< g::matrix > basis = std::vector< g::matrix >();
@@ -247,3 +250,4 @@ lie_algebra* bracket_lie_algebras(lie_algebra &algebra1, lie_algebra  &algebra2)
     lie_algebra* out = new lie_algebra(basis, true);
     return out;
 }
+*/

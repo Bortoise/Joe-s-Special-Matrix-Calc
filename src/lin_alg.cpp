@@ -10,8 +10,19 @@ namespace lin_alg{
         for(int i = 0; i < m.nops(); i++){
             v.push_back(m.op(i));
         }
+
         return v;
 
+    }
+
+    g::matrix matricize(g::exvector &v, unsigned int r, unsigned int c){
+        g::matrix x(r,c);
+        for(int i  = 0; i < r; i++){
+            for(int j = 0; j < c; j++){
+                x.set(i,j, v[i*c + j]);
+            }
+        }
+        return x;
     }
 
 

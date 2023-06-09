@@ -55,6 +55,7 @@ namespace lin_alg{
     std::vector< g::exvector > nullspace(g::matrix &m);
 
     g::exvector vectorize(g::matrix &m);
+    g::matrix matricize(g::exvector &v, unsigned int r, unsigned int c);
     g::matrix basis_to_vectorized_matrix(std::vector< g::matrix > &basis);
 
 };

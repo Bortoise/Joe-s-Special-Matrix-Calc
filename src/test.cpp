@@ -60,8 +60,22 @@ void benchmark_spanning_subsequence(){
 
 
 int main() {
+
+    
+
+
+
     g::symbol x("x");
     g::symbol y("y");
+
+    g::matrix a = {{0,x,0,1},{0,0,y,1},{0,0,0,0}};
+    g::exvector v = lin_alg::vectorize(a);
+    g::matrix b = lin_alg::matricize(v, 3, 4);
+    utils::print_matrix(a);
+    std::cout<<std::endl;
+    utils::print_matrix(b);
+
+    /*
     g::matrix a = {{0,x,0,1},{0,0,y,1},{0,0,0,0}};
     std::cout << "Printing basis of nullspace of:" << std::endl;
     utils::print_matrix(a);
@@ -79,6 +93,7 @@ int main() {
     utils::print_matrix(c);
     std::cout << "Gaussian elimination:" << std::endl;
     utils::print_matrix(d);
+    */
 
     return 0;
 }
