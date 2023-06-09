@@ -95,5 +95,8 @@ int main() {
     utils::print_matrix(d);
     */
 
+    g::matrix e = {{0,0},{0,1}};
+    g::matrix f = {{lin_alg::prod_trace(e,e)}};
+    utils::print_matrix(f);
     return 0;
 }
