@@ -103,7 +103,10 @@ lie_algebra* lie_algebra::compute_centralizer() {
     // Let L have basis e_i.
     lie_algebra* out = compute_centralizer_element(this->basis[0], get_sl(this->get_sl_size())); // Sets out=C_{sl(n)}(e_1)
     for (int i = 1; i < this->dim; i++) {
-        out = compute_centralizer_element(this->basis[i], out); // Updates C_{sl(n)}(e_1,...,e_{i+1}) -> C_{C_{sl(n)}(e_1,...,e_i)}(e_{i+1})
+        // Updates C_{sl(n)}(e_1,...,e_{i+1}) -> C_{C_{sl(n)}(e_1,...,e_i)}(e_{i+1})
+        lie_algebra* out_new = compute_centralizer_element(this->basis[i], out);
+        delete(out);
+        out = out_new;
     }
     this->centralizer = stdx::optional< lie_algebra* >(out); // Records the centralizer
     return out;
