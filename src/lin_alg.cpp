@@ -17,6 +17,7 @@ namespace lin_alg{
 
     g::matrix matricize(g::exvector &v, unsigned int r, unsigned int c){
         g::matrix x(r,c);
+
         for(int i  = 0; i < r; i++){
             for(int j = 0; j < c; j++){
                 x.set(i,j, v[i*c + j]);
@@ -25,7 +26,31 @@ namespace lin_alg{
         return x;
     }
 
+    g::matrix vector_to_matrix(g::exvector &v, std::vector< g::matrix > &basis){
+        // Convert a vector to a matrix in a given basis
+        if(v.size() != basis.size()){
+            throw("Error: vector size does not match basis size");
+        }
 
+        g::matrix rtn(basis[0].rows(), basis[0].cols());
+        for(int i = 0; i < v.size(); i++){
+            rtn = rtn.add(basis[i].mul_scalar(v[i]));
+        }
+        return rtn;
+    }
+
+    g::matrix vector_to_matrix(g::matrix &v, std::vector< g::matrix > &basis){
+        // Convert a vector to a matrix in a given basis
+        if(v.nops() != basis.size()){
+            throw("Error: vector size does not match basis size");
+        }
+
+        g::matrix rtn(basis[0].rows(), basis[0].cols());
+        for(int i = 0; i < v.nops(); i++){
+            rtn = rtn.add(basis[i].mul_scalar(v(i,1)));
+        }
+        return rtn;
+    }
 
     g::matrix bracket(g::matrix &x, g::matrix &y){
         // Compute [x,y] = xy - yx
@@ -244,7 +269,21 @@ namespace lin_alg{
 
         return nullspace_basis;
     }
-
+    
+    g::exvector sl_ize(g::matrix m, int n) {
+        g::exvector out = {}; 
+        for (int i = 0; i < n-1; i++) {
+            for (int j = i+1; j < n; j++) {
+                out.push_back(m(i,j));
+                out.push_back(m(j,i));
+            }
+        }
+        for (int i = 1; i < n-1; i++) {
+            out.push_back(-1*m(i,i));
+        }
+        return out;
+    }
+    
     g::ex prod_trace(g::matrix a, g::matrix b) {
         unsigned int num_rows = a.rows();
         unsigned int num_cols = a.cols();

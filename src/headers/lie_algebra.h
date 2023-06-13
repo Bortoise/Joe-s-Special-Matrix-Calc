@@ -48,7 +48,7 @@ class lie_algebra { // We always refer the lie algebra we are working with L.
          * @param x A sl_size by sl_size matrix.
          * @param M A lie algebra contains L.
          */
-        lie_algebra* compute_normalizer_element(g::matrix x, lie_algebra* M);
+        std::vector< g::matrix > compute_normalizer_element(g::matrix x, std::vector< g::matrix > M);
 
         /** Computes the centralizer in sl(n), C_{sl(n)}(L), and stores it in this->centralizer. */
         lie_algebra* compute_centralizer();

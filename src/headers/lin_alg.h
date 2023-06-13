@@ -13,6 +13,16 @@ namespace lin_alg{
     std::vector< g::matrix > intersect(std::vector< g::matrix > &matrices1, std::vector< g::matrix > &matrices2);
     std::vector< g::matrix > symbolic_matrix_to_basis();
 
+    /**
+     * @brief Converts a matrix to a vector in a basis whose elements are matrices
+     * 
+     * @param m The matrix to be converted to a vector.
+     * @param basis A basis of matrices.
+     * 
+     * @return A vector representing the matrix with respect to the given basis
+     */
+    g::exvector matrix_to_vector_in_basis(g::matrix &m, std::vector< g::matrix > &basis);
+
     /** 
      * @brief Swaps the i-th and j-th rows of m in place.
      *  
@@ -55,7 +65,38 @@ namespace lin_alg{
     std::vector< g::exvector > nullspace(g::matrix &m);
 
     g::exvector vectorize(g::matrix &m);
+
+    /**
+     * @brief Returns the matrix representation of the given vector.
+     * 
+     * @param v Exvector to be converted into the matrix.
+     * @param r Number of rows of the matrix
+     * @param c Number of columns of the matrix
+     * @return Matrix representation of the vector v.
+     * 
+     * @note The matrix is constructed column by column.
+     */
     g::matrix matricize(g::exvector &v, unsigned int r, unsigned int c);
+    
+
+    /**
+    * @brief Returns a vector of the coefficients of m with respect to the standard basis of sl(n).
+    *
+    * @param m An element of sl(n)
+    * @return A vector of the coefficients of m with respect to the standard basis of sl(n).
+    */
+    g::exvector sl_ize(g::matrix m, int n);
+
+    /**
+     * @brief Returns the matrix represented by the given vector
+     * 
+     * @param v The vector of expressions to be converted to a matrix
+     * @param basis The list of matrices to multiply the vector against
+     * @return The matrix represented by the vector v in the given basis
+     */
+    g::matrix vector_to_matrix(g::exvector &v, std::vector< g::matrix > &basis);
+    g::matrix vector_to_matrix(g::matrix &v, std::vector< g::matrix > &basis);
+
     g::matrix basis_to_vectorized_matrix(std::vector< g::matrix > &basis);
 
     /** Computes the tr(ab) assuming that the product ab makes sense and produces a square matrix*/
