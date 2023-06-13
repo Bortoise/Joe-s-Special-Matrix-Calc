@@ -35,7 +35,6 @@ lie_algebra::lie_algebra(std::vector<g::matrix> generators, bool _basis) {
 }
 
 lie_algebra::~lie_algebra() { //TODO: figure out funky warnings in the destructor
-    delete (&basis);
     try {
         std::vector<lie_algebra *> D = derived_series.value();
         for (auto & i : D) {
@@ -43,24 +42,20 @@ lie_algebra::~lie_algebra() { //TODO: figure out funky warnings in the destructo
         }
         delete (&D);
     } catch (stdx::bad_optional_access) {}
-    delete (&derived_series);
     try {
         std::vector<lie_algebra *> L = lower_central_series.value();
         for (auto & i : L) {
             delete i;
         }
     } catch (stdx::bad_optional_access) {}
-    delete (&lower_central_series);
     try {
         lie_algebra* N = normalizer.value();
         delete(N);
     } catch(stdx::bad_optional_access) {}
-    delete(&normalizer);
     try {
         lie_algebra* C = centralizer.value();
         delete(C);
     } catch(stdx::bad_optional_access) {}
-    delete(&centralizer);
 }
 
 std::vector<g::matrix> lie_algebra::get_basis() {
