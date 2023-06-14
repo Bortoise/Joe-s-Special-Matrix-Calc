@@ -97,6 +97,11 @@ namespace lin_alg{
     g::matrix vector_to_matrix(g::exvector &v, std::vector< g::matrix > &basis);
     g::matrix vector_to_matrix(g::matrix &v, std::vector< g::matrix > &basis);
 
+    /** Returns the matrix with the given matrices vectorized then put in as rows.
+     * //TODO: finish docstring
+     * @param basis
+     * @return
+     */
     g::matrix basis_to_vectorized_matrix(std::vector< g::matrix > &basis);
 
     /** Computes the tr(ab) assuming that the product ab makes sense and produces a square matrix*/

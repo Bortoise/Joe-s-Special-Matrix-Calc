@@ -74,7 +74,6 @@ int lie_algebra::get_dim() const { return this->dim; }
 lie_algebra* lie_algebra::get_sl(int n) {
     if (lie_algebra::sl.has_value()) {
         if (lie_algebra::sl.value()->get_sl_size() == n) {
-            std::cout << "here" << std::endl;
             return lie_algebra::sl.value();
         }
     }
@@ -101,7 +100,10 @@ lie_algebra* lie_algebra::get_sl(int n) {
     return out;
 }
 
-lie_algebra* lie_algebra::compute_centralizer() {
+lie_algebra* lie_algebra::compute_centralizer() { //TODO: fix, broken
+    if (this->centralizer.has_value()) {
+        return this->centralizer.value();
+    }
     // Let L have basis e_i.
     lie_algebra* out = compute_centralizer_element(this->basis[0], get_sl(this->get_sl_size())); // Sets out=C_{sl(n)}(e_1)
     for (int i = 1; i < this->dim; i++) {
@@ -115,6 +117,9 @@ lie_algebra* lie_algebra::compute_centralizer() {
 }
 
 lie_algebra* lie_algebra::compute_normalizer() {
+    if (this->normalizer.has_value()) {
+        return this->normalizer.value();
+    }
     // Let L have basis {e_i, i<=r}. Set M_0 = sl(n) and M_{i+1}=N(x,L,M_i), where N(x,L,M) is the elements y of M such that ad(y) x in L.
     // It is clear that N(L)=\bigcap_{j<= r} N(x,L,sl(n))=M_r
 
@@ -134,21 +139,20 @@ lie_algebra* lie_algebra::compute_normalizer() {
 std::vector< g::matrix > lie_algebra::compute_normalizer_element(g::matrix x, std::vector< g::matrix > M) {
 
 
-    lie_algebra* sl = lie_algebra::get_sl(this->get_sl_size());
+    lie_algebra* sl_alg = lie_algebra::get_sl(this->get_sl_size());
 
     // Computes the matrix of ad(x) with respect to the standard basis of M.
     g::exvector ad_x_on_basis = {};
     for (g::matrix v : M) {
-        g::exvector temp = lin_alg::sl_ize(lin_alg::bracket(x,v), sl->get_sl_size());
+        g::exvector temp = lin_alg::sl_ize(lin_alg::bracket(x,v), sl_alg->get_sl_size());
         ad_x_on_basis.insert(ad_x_on_basis.end(), temp.begin(), temp.end());
     }
-    g::matrix adx = lin_alg::matricize(ad_x_on_basis, sl->get_dim(), M.size());
-    
+    g::matrix adx = lin_alg::matricize(ad_x_on_basis, sl_alg->get_dim(), M.size());
     // Let sl = span(alpha) where alpha is the extension of the basis of L to sl.
-    std::vector< g::matrix > alpha = this->extend_basis(sl);
+    std::vector< g::matrix > alpha = this->extend_basis(sl_alg);
     // Let H be the span of the remaining basis elements of sl not in L. Let P (proj) be the projection onto H, in the basis alpha.
-    g::matrix proj = {sl->get_dim(), sl->get_dim()};
-    for (int i = this->get_dim(); i < sl->get_dim(); i++) {
+    g::matrix proj = {sl_alg->get_dim(), sl_alg->get_dim()};
+    for (int i = this->get_dim(); i < sl_alg->get_dim(); i++) {
         proj(i,i) = 1;
     }
     
@@ -159,20 +163,20 @@ std::vector< g::matrix > lie_algebra::compute_normalizer_element(g::matrix x, st
         alpha_to_sl.insert(alpha_to_sl.end(), temp_insert.begin(), temp_insert.end());
     }
 
-    g::matrix alpha_to_sl_matrix = lin_alg::matricize(alpha_to_sl, sl->get_dim(), sl->get_dim());
+    g::matrix alpha_to_sl_matrix = lin_alg::matricize(alpha_to_sl, sl_alg->get_dim(), sl_alg->get_dim());
     g::matrix sl_to_alpha = alpha_to_sl_matrix.inverse();
  
     // TODO: to save time we can precompute Id_{std_sl}^{alpha}, alpha, in compute_normalizer.
     // N(x,L,M) = ker(P * ad(x)), which we can compute as null(P_{alpha}^{alpha} * Id_{std_sl}^{alpha} * ad(x)_{std_M}^{std_sl}),
     // since y is in ker(P) iff y is in L
-    g::matrix padx = {sl->get_dim(), M.size()};
+    g::matrix padx = {sl_alg->get_dim(), M.size()};
     padx = proj.mul(sl_to_alpha).mul(adx);
     std::vector< g::exvector > null_basis_M_alpha = lin_alg::nullspace(padx);
     // Puts the nullspace in the standard basis of sl. // TODO: Don't need helper function
     std::vector< g::matrix > null_basis_sl = {};
-    std::vector< g::matrix > sl_basis = sl->get_basis();
+    std::vector< g::matrix > sl_basis = sl_alg->get_basis();
     for (g::exvector v : null_basis_M_alpha) {
-        g::matrix v_sl_basis = alpha_to_sl_matrix.mul(lin_alg::matricize(v,sl->get_dim(), 1));
+        g::matrix v_sl_basis = alpha_to_sl_matrix.mul(lin_alg::matricize(v,sl_alg->get_dim(), 1));
         null_basis_sl.push_back(lin_alg::vector_to_matrix(v_sl_basis, sl_basis));
     }
     return null_basis_sl;
@@ -192,6 +196,9 @@ lie_algebra* lie_algebra::compute_derived_subalgebra() {
 }
 
 std::vector< lie_algebra* > lie_algebra::compute_derived_series() {
+    if (this->derived_series.has_value()) {
+        return std::vector(this->derived_series.value());
+    }
     std::vector< lie_algebra* > derived_series_out = std::vector< lie_algebra* >();
     int old_dim = this->dim;
     lie_algebra* D = this->compute_derived_subalgebra(); // Sets L^1 = [L,L]
@@ -210,6 +217,9 @@ std::vector< lie_algebra* > lie_algebra::compute_derived_series() {
 }
 
 std::vector< lie_algebra* > lie_algebra::compute_lower_central_series() {
+    if (this->lower_central_series.has_value()) {
+        return std::vector(this->lower_central_series.value());
+    }
     std::vector< lie_algebra* > lower_central_series_out = std::vector< lie_algebra* >();
     int old_dim = this->dim;
     lie_algebra* C = this->compute_derived_subalgebra(); // Sets L^(1) = [L,L]

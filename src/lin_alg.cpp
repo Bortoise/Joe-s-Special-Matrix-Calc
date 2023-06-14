@@ -8,16 +8,16 @@ namespace lin_alg{
         if (basis.empty()) {
             return {0,0};
         }
-        g::matrix out = {static_cast<unsigned int>(basis[0].nops()),
-                         static_cast<unsigned int>(basis.size())};
-        int j = 0;
+        g::matrix out = {static_cast<unsigned int>(basis.size()),
+                         static_cast<unsigned int>(basis[0].nops())};
+        int i = 0;
         for (g::matrix m : basis) {
-            int i = 0;
+            int j = 0;
             for (const g::ex& e : vectorize(m)) {
                 out(i,j) = e;
-                i++;
+                j++;
             }
-            j++;
+            i++;
         }
         return out;
     }
@@ -34,7 +34,6 @@ namespace lin_alg{
 
     g::matrix matricize(g::exvector &v, unsigned int r, unsigned int c){
         g::matrix x(r,c);
-
         for(int i  = 0; i < r; i++){
             for(int j = 0; j < c; j++){
                 x.set(i,j, v[i*c + j]);
@@ -293,7 +292,7 @@ namespace lin_alg{
                 out.push_back(m(j,i));
             }
         }
-        for (int i = 1; i < n-1; i++) {
+        for (int i = 1; i < n; i++) {
             out.push_back(-1*m(i,i));
         }
         return out;
