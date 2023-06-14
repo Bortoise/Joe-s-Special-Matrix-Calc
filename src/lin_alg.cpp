@@ -5,8 +5,23 @@
 namespace lin_alg{
 
     g::matrix basis_to_vectorized_matrix(std::vector< g::matrix > &basis) {
-        return {};
+        if (basis.empty()) {
+            return {0,0};
+        }
+        g::matrix out = {static_cast<unsigned int>(basis[0].nops()),
+                         static_cast<unsigned int>(basis.size())};
+        int j = 0;
+        for (g::matrix m : basis) {
+            int i = 0;
+            for (const g::ex& e : vectorize(m)) {
+                out(i,j) = e;
+                i++;
+            }
+            j++;
+        }
+        return out;
     }
+
     g::exvector vectorize(g::matrix &m){
         g::exvector v;
         for(int i = 0; i < m.nops(); i++){
