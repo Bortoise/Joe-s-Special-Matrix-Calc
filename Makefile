@@ -7,7 +7,7 @@ HEADERS=$(src/headers/)
 out/%.o: src/%.cpp
 	$(CXX) $(CFLAGS) -c -o $@ $^ $(LDFLAGS)
 
-out/library.so: out/utils.o out/lie_algebra.o out/lin_alg.o
+out/library.so: out/utils.o  out/lin_alg.o out/lie_algebra.o
 	$(CXX) $(CFLAGS) -shared -o $@ $^ # $(LDFLAGS)
 # mv $@ out/$@
 #	ar rvs $@ $^
