@@ -159,10 +159,9 @@ std::vector< g::matrix > lie_algebra::compute_normalizer_element(g::matrix x, st
     // Vectorize the matrices in alpha, put them as columns of a matrix and then invert to get the change of basis from std of sl to alpha
     g::exvector alpha_to_sl = {};
     for (g::matrix v : alpha) {
-        g::exvector temp_insert = lin_alg::vectorize(v);
+        g::exvector temp_insert = lin_alg::sl_ize(v, this->get_sl_size());
         alpha_to_sl.insert(alpha_to_sl.end(), temp_insert.begin(), temp_insert.end());
     }
-
     g::matrix alpha_to_sl_matrix = lin_alg::matricize(alpha_to_sl, sl_alg->get_dim(), sl_alg->get_dim());
     g::matrix sl_to_alpha = alpha_to_sl_matrix.inverse();
  
@@ -176,8 +175,7 @@ std::vector< g::matrix > lie_algebra::compute_normalizer_element(g::matrix x, st
     std::vector< g::matrix > null_basis_sl = {};
     std::vector< g::matrix > sl_basis = sl_alg->get_basis();
     for (g::exvector v : null_basis_M_alpha) {
-        g::matrix v_sl_basis = alpha_to_sl_matrix.mul(lin_alg::matricize(v,sl_alg->get_dim(), 1));
-        null_basis_sl.push_back(lin_alg::vector_to_matrix(v_sl_basis, sl_basis));
+        g::matrix v_sl_basis = alpha_to_sl_matrix.mul(lin_alg::matricize(v,sl_alg->get_dim(), 1));        null_basis_sl.push_back(lin_alg::vector_to_matrix(v_sl_basis, sl_basis));
     }
     return null_basis_sl;
 }

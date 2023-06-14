@@ -63,7 +63,7 @@ namespace lin_alg{
 
         g::matrix rtn(basis[0].rows(), basis[0].cols());
         for(int i = 0; i < v.nops(); i++){
-            rtn = rtn.add(basis[i].mul_scalar(v(i,1)));
+            rtn = rtn.add(basis[i].mul_scalar(v(i,0)));
         }
         return rtn;
     }
@@ -119,9 +119,7 @@ namespace lin_alg{
             (*mat)(row1,i) = (*mat)(row2,i);
             (*mat)(row2,i) = temp;
         }
-    }   
-
-
+    }
 
     g::matrix gaussian_elimination(g::matrix const &mat){
         // Perform gaussian elimination on a matrix without swapping any columns
