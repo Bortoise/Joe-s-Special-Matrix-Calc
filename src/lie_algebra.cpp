@@ -125,10 +125,10 @@ lie_algebra* lie_algebra::compute_normalizer() {
 
     // Sets out=N_{sl(n)}(e_1,L)=M_1
     std::vector< g::matrix > out = this->compute_normalizer_element(this->basis[0], get_sl(this->get_sl_size())->get_basis());
+
     for (int i = 1; i < this->dim; i++) {
         // Updates out -> M_{i+1}
         std::vector< g::matrix > out_new = this->compute_normalizer_element(this->basis[i], out);
-        delete(&out);
         out = out_new;
     }
     lie_algebra* out_alg = new lie_algebra(out, true); 
@@ -137,46 +137,49 @@ lie_algebra* lie_algebra::compute_normalizer() {
 }
 
 std::vector< g::matrix > lie_algebra::compute_normalizer_element(g::matrix x, std::vector< g::matrix > M) {
-
-
     lie_algebra* sl_alg = lie_algebra::get_sl(this->get_sl_size());
-
     // Computes the matrix of ad(x) with respect to the standard basis of M.
     g::exvector ad_x_on_basis = {};
     for (g::matrix v : M) {
         g::exvector temp = lin_alg::sl_ize(lin_alg::bracket(x,v), sl_alg->get_sl_size());
         ad_x_on_basis.insert(ad_x_on_basis.end(), temp.begin(), temp.end());
     }
-    g::matrix adx = lin_alg::matricize(ad_x_on_basis, sl_alg->get_dim(), M.size());
+    // adx has [x,v] (in the basis of sl) as the columns of the matrix, where v is the basis of M.
+    g::matrix adx = lin_alg::matricize(ad_x_on_basis, sl_alg->get_dim(), M.size(), true);
     // Let sl = span(alpha) where alpha is the extension of the basis of L to sl.
     std::vector< g::matrix > alpha = this->extend_basis(sl_alg);
+
     // Let H be the span of the remaining basis elements of sl not in L. Let P (proj) be the projection onto H, in the basis alpha.
     g::matrix proj = {sl_alg->get_dim(), sl_alg->get_dim()};
     for (int i = this->get_dim(); i < sl_alg->get_dim(); i++) {
         proj(i,i) = 1;
     }
-    
+
     // Vectorize the matrices in alpha, put them as columns of a matrix and then invert to get the change of basis from std of sl to alpha
     g::exvector alpha_to_sl = {};
     for (g::matrix v : alpha) {
         g::exvector temp_insert = lin_alg::sl_ize(v, this->get_sl_size());
         alpha_to_sl.insert(alpha_to_sl.end(), temp_insert.begin(), temp_insert.end());
     }
-    g::matrix alpha_to_sl_matrix = lin_alg::matricize(alpha_to_sl, sl_alg->get_dim(), sl_alg->get_dim());
+
+    g::matrix alpha_to_sl_matrix = lin_alg::matricize(alpha_to_sl, sl_alg->get_dim(), sl_alg->get_dim(), true);
     g::matrix sl_to_alpha = alpha_to_sl_matrix.inverse();
- 
+
     // TODO: to save time we can precompute Id_{std_sl}^{alpha}, alpha, in compute_normalizer.
     // N(x,L,M) = ker(P * ad(x)), which we can compute as null(P_{alpha}^{alpha} * Id_{std_sl}^{alpha} * ad(x)_{std_M}^{std_sl}),
     // since y is in ker(P) iff y is in L
     g::matrix padx = {sl_alg->get_dim(), M.size()};
     padx = proj.mul(sl_to_alpha).mul(adx);
-    std::vector< g::exvector > null_basis_M_alpha = lin_alg::nullspace(padx);
+    std::vector< g::exvector > null_basis_M = lin_alg::nullspace(padx);
     // Puts the nullspace in the standard basis of sl. // TODO: Don't need helper function
     std::vector< g::matrix > null_basis_sl = {};
     std::vector< g::matrix > sl_basis = sl_alg->get_basis();
-    for (g::exvector v : null_basis_M_alpha) {
-        g::matrix v_sl_basis = alpha_to_sl_matrix.mul(lin_alg::matricize(v,sl_alg->get_dim(), 1));        null_basis_sl.push_back(lin_alg::vector_to_matrix(v_sl_basis, sl_basis));
+
+    for (g::exvector v : null_basis_M) {
+        g::matrix v_matrix = lin_alg::vector_to_matrix(v,M);
+        null_basis_sl.push_back(v_matrix);
     }
+    
     return null_basis_sl;
 }
 

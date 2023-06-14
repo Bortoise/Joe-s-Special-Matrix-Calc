@@ -1,5 +1,6 @@
 #include "globals.h"
 #include "lin_alg.h"
+#include "utils.h"
 
 #ifndef JOEMATRIXCALC_LIEALGEBRA_H
 #define JOEMATRIXCALC_LIEALGEBRA_H

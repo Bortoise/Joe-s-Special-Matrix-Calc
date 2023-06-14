@@ -8,7 +8,17 @@
 namespace lin_alg{
     /** Computes the lie bracket mn-nm. */
     g::matrix bracket(g::matrix &m, g::matrix &n);
+
+
+
+   /**
+     * @brief Returns a vector representing a subsequence of matrices 
+     * 
+     * @param matrices A list of matrices
+     * @return basis A basis for span(matrices) which is also a subsequence of (matrices)
+     */
     std::vector< g::matrix > spanning_subsequence(std::vector< g::matrix > &matrices);
+    
     std::vector< g::matrix > is_linearly_ind(std::vector< g::matrix > &matrices);
     std::vector< g::matrix > intersect(std::vector< g::matrix > &matrices1, std::vector< g::matrix > &matrices2);
     std::vector< g::matrix > symbolic_matrix_to_basis();
@@ -72,11 +82,12 @@ namespace lin_alg{
      * @param v Exvector to be converted into the matrix.
      * @param r Number of rows of the matrix
      * @param c Number of columns of the matrix
+     * @param rowcol If false, then inserts the vector row by row. If true, then inserts the vector column by column.
      * @return Matrix representation of the vector v.
      * 
      * @note The matrix is constructed column by column.
      */
-    g::matrix matricize(g::exvector &v, unsigned int r, unsigned int c);
+    g::matrix matricize(g::exvector &v, unsigned int r, unsigned int c, bool rowcol = false);
     
 
     /**

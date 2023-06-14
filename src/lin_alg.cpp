@@ -32,11 +32,19 @@ namespace lin_alg{
 
     }
 
-    g::matrix matricize(g::exvector &v, unsigned int r, unsigned int c){
+    g::matrix matricize(g::exvector &v, unsigned int r, unsigned int c, bool rowcol){
         g::matrix x(r,c);
-        for(int i  = 0; i < r; i++){
-            for(int j = 0; j < c; j++){
-                x.set(i,j, v[i*c + j]);
+        if (rowcol == false){
+            for(int i  = 0; i < r; i++){
+                for(int j = 0; j < c; j++){
+                    x.set(i,j, v[i*c + j]);
+                }
+            }
+        } else {
+            for(int i  = 0; i < c; i++){
+                for(int j = 0; j < r; j++){
+                    x.set(j,i, v[i*r + j]);
+                }
             }
         }
         return x;
@@ -263,7 +271,7 @@ namespace lin_alg{
             int pivot_ind = 0;
             for (int j = 0; j < temp.cols(); j++){
                 // Add the correct multiplying factor times the element in the column
-                if (j == *pivot_it && pivot_it != pivot_cols.end()){
+                if (pivot_it != pivot_cols.end() && j == *pivot_it){
                     nullspace_vector.push_back(temp(pivot_ind,i)*totalProduct/pivots[pivot_ind]);
                     pivot_it++; pivot_ind++;
                 }

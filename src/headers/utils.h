@@ -3,7 +3,6 @@
 //
 
 #include "globals.h"
-#include "lie_algebra.h"
 
 #ifndef  JOEMATRIXCALC_UTILS_H
 #define JOEMATRIXCALC_UTILS_H
