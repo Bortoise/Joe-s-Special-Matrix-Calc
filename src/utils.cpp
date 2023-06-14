@@ -25,4 +25,11 @@ namespace utils{
             std::cout<<")"<<std::endl;
         }
     }
+
+    void print_matrices(std::vector< g::matrix > m){
+        for (g::matrix i : m){
+            print_matrix(i);
+            std::cout << std::endl;
+        }
+    }
 };

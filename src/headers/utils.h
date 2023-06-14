@@ -13,6 +13,7 @@ namespace g = GiNaC;
 namespace utils{
     void print_matrix(g::matrix &m);
     void print_exvectors(std::vector< g::exvector > &v);
+    void print_matrices(std::vector< g::matrix > m);
 }
 
 #endif // JOEMATRIXCALC_UTILS_H
