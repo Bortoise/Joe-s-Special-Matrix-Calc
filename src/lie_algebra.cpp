@@ -3,21 +3,25 @@
 // using namespace L;
 // namespace se = std::experimental;
 lie_algebra::lie_algebra(std::vector<g::matrix> generators, bool _basis) {
-    if (generators[0].rows() != generators[0].cols()) {
-        throw "Input matrices are not square"; // make exception for
-    }
-    sl_size = generators[0].rows();
-    std::vector< g::matrix > new_basis = lin_alg::spanning_subsequence(generators);
-    if(!_basis) {
-        int old_dim = 0;
-        while (old_dim != static_cast<int>(new_basis.size())) {
-            old_dim = static_cast<int>(new_basis.size());
-            for (int i = 0; i < old_dim - 1; i++) {
-                for (int j = i + 1; j < old_dim; j++) {
-                    new_basis.push_back(lin_alg::bracket(new_basis[i], new_basis[j]));
+    sl_size = 0;
+    std::vector<g::matrix> new_basis = {};
+    if(!generators.empty()) {
+        if (generators[0].rows() != generators[0].cols()) {
+            throw "Input matrices are not square"; // make exception for
+        }
+        sl_size = generators[0].rows();
+        new_basis = lin_alg::spanning_subsequence(generators);
+        if (!_basis) {
+            int old_dim = 0;
+            while (old_dim != static_cast<int>(new_basis.size())) {
+                old_dim = static_cast<int>(new_basis.size());
+                for (int i = 0; i < old_dim - 1; i++) {
+                    for (int j = i + 1; j < old_dim; j++) {
+                        new_basis.push_back(lin_alg::bracket(new_basis[i], new_basis[j]));
+                    }
                 }
+                new_basis = lin_alg::spanning_subsequence(new_basis);
             }
-            new_basis = lin_alg::spanning_subsequence(new_basis);
         }
     }
 
@@ -69,7 +73,10 @@ int lie_algebra::get_dim() const { return this->dim; }
 
 lie_algebra* lie_algebra::get_sl(int n) {
     if (lie_algebra::sl.has_value()) {
-        return lie_algebra::sl.value();
+        if (lie_algebra::sl.value()->get_sl_size() == n) {
+            std::cout << "here" << std::endl;
+            return lie_algebra::sl.value();
+        }
     }
     std::vector<g::matrix> basis = std::vector<g::matrix>();
     g::matrix m = g::matrix(n,n);
@@ -84,7 +91,7 @@ lie_algebra* lie_algebra::get_sl(int n) {
         }
     }
     m(0,0) = 1;
-    for (int i = 1; i < n-1; i++) {
+    for (int i = 1; i < n; i++) {
         m(i,i) = -1;
         basis.push_back(m);
         m(i,i) = 0;
@@ -188,13 +195,12 @@ std::vector< lie_algebra* > lie_algebra::compute_derived_series() {
     std::vector< lie_algebra* > derived_series_out = std::vector< lie_algebra* >();
     int old_dim = this->dim;
     lie_algebra* D = this->compute_derived_subalgebra(); // Sets L^1 = [L,L]
-    
     while(D->get_dim() != old_dim) { // Terminates when L^n=L^{n+1}
         derived_series_out.push_back(D);
         old_dim = D->get_dim(); // Updates old_dim -> dim L^n
         D = D->compute_derived_subalgebra(); // Updates D -> L^{n+1}
     }
-    
+
     if(derived_series_out.empty()) { // This deals with the case [L,L]=L
         derived_series_out.push_back(D);
     }

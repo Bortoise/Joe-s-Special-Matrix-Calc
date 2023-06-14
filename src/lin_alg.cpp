@@ -75,6 +75,9 @@ namespace lin_alg{
     }
 
     std::vector< g::matrix > spanning_subsequence(std::vector< g::matrix > &matrices){
+        if(matrices.empty()) {
+            return std::vector< g::matrix >();
+        }
         // Remove linear dependences from a set of matrices
         std::vector< g::exvector > vectorized;
         for(g::matrix i: matrices){
@@ -93,7 +96,6 @@ namespace lin_alg{
         }
 
         temp = gaussian_elimination(temp);
-
         std::vector< g::matrix > rtn; 
         int csd = 0;
         for(int i = 0; i < temp.cols(); i++){
