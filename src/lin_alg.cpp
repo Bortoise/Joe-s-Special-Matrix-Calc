@@ -4,7 +4,9 @@
 
 namespace lin_alg{
 
-    
+    g::matrix basis_to_vectorized_matrix(std::vector< g::matrix > &basis) {
+        return {};
+    }
     g::exvector vectorize(g::matrix &m){
         g::exvector v;
         for(int i = 0; i < m.nops(); i++){
@@ -75,11 +77,7 @@ namespace lin_alg{
             }
         }
 
-        utils::print_matrix(temp);
-        std::cout<<std::endl;
         temp = gaussian_elimination(temp);
-        utils::print_matrix(temp);
-        std::cout<<std::endl;
 
         std::vector< g::matrix > rtn; 
         int csd = 0;
