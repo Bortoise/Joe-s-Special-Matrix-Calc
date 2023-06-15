@@ -44,7 +44,6 @@ lie_algebra::~lie_algebra() { //TODO: figure out funky warnings in the destructo
         for (auto & i : D) {
             delete i;
         }
-        delete (&D);
     } catch (stdx::bad_optional_access) {}
     try {
         std::vector<lie_algebra *> L = lower_central_series.value();
