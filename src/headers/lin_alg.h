@@ -11,7 +11,7 @@ namespace lin_alg{
 
 
 
-   /**
+     /**
      * @brief Returns a vector representing a subsequence of matrices 
      * 
      * @param matrices A list of matrices
@@ -72,7 +72,7 @@ namespace lin_alg{
      * @param m A matrix.
      * @return A basis of the nullspace of m.
      */
-    std::vector< g::exvector > nullspace(g::matrix &m);
+    std::vector< g::matrix > nullspace(g::matrix &m, bool division = true);
 
     g::exvector vectorize(g::matrix &m);
 
@@ -88,6 +88,7 @@ namespace lin_alg{
      * @note The matrix is constructed column by column.
      */
     g::matrix matricize(g::exvector &v, unsigned int r, unsigned int c, bool rowcol = false);
+    g::matrix matricize(g::matrix &v, unsigned int r, unsigned int c, bool rowcol = false);
     
 
     /**
@@ -117,6 +118,12 @@ namespace lin_alg{
 
     /** Computes the tr(ab) assuming that the product ab makes sense and produces a square matrix*/
     g::ex prod_trace(g::matrix a, g::matrix b);
+
+
+    /** Tests if the subspace spanned by A contains the subspace spanned by B, assuming A is linearly independant
+    *
+    */
+    bool contains(std::vector< g::exvector >* A, std::vector< g::exvector >* B);
 };
 
 #endif //JOEMATRIXCALC_LIN_ALG_H

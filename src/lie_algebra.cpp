@@ -135,16 +135,22 @@ lie_algebra* lie_algebra::compute_normalizer() {
     return out_alg;
 }
 
+// sl = L\oplus H. P_U. Then x in ker(P_H) iff x in L. i.e. ker(P_H) = L
+// x in ker(P_H ad(y)) iff ad(y)x in ker(P_H) iff ad(y)x in L iff [x,y] in L.  
+
 std::vector< g::matrix > lie_algebra::compute_normalizer_element(g::matrix x, std::vector< g::matrix > M) {
     lie_algebra* sl_alg = lie_algebra::get_sl(this->get_sl_size());
-    // Computes the matrix of ad(x) with respect to the standard basis of M.
+
+    // Computes the matrix of ad(x) with respect to the standard basis of M on the domain and basis of sl on the codomain.
     g::exvector ad_x_on_basis = {};
     for (g::matrix v : M) {
         g::exvector temp = lin_alg::sl_ize(lin_alg::bracket(x,v), sl_alg->get_sl_size());
         ad_x_on_basis.insert(ad_x_on_basis.end(), temp.begin(), temp.end());
     }
+
     // adx has [x,v] (in the basis of sl) as the columns of the matrix, where v is the basis of M.
     g::matrix adx = lin_alg::matricize(ad_x_on_basis, sl_alg->get_dim(), M.size(), true);
+
     // Let sl = span(alpha) where alpha is the extension of the basis of L to sl.
     std::vector< g::matrix > alpha = this->extend_basis(sl_alg);
 
@@ -167,19 +173,18 @@ std::vector< g::matrix > lie_algebra::compute_normalizer_element(g::matrix x, st
     // TODO: to save time we can precompute Id_{std_sl}^{alpha}, alpha, in compute_normalizer.
     // N(x,L,M) = ker(P * ad(x)), which we can compute as null(P_{alpha}^{alpha} * Id_{std_sl}^{alpha} * ad(x)_{std_M}^{std_sl}),
     // since y is in ker(P) iff y is in L
-    g::matrix padx = {sl_alg->get_dim(), M.size()};
-    padx = proj.mul(sl_to_alpha).mul(adx);
-    std::vector< g::exvector > null_basis_M = lin_alg::nullspace(padx);
-    // Puts the nullspace in the standard basis of sl. // TODO: Don't need helper function
-    std::vector< g::matrix > null_basis_sl = {};
-    std::vector< g::matrix > sl_basis = sl_alg->get_basis();
+    g::matrix padx = proj.mul(sl_to_alpha).mul(adx);
+    std::vector< g::matrix > null_basis_M = lin_alg::nullspace(padx);
 
-    for (g::exvector v : null_basis_M) {
+    // Puts the nullspace in the standard basis of sl. // TODO: Don't need helper function
+    std::vector< g::matrix > null_basis_matrices = {};
+
+    for (g::matrix v : null_basis_M) {
         g::matrix v_matrix = lin_alg::vector_to_matrix(v,M);
-        null_basis_sl.push_back(v_matrix);
+        null_basis_matrices.push_back(v_matrix);
     }
     
-    return null_basis_sl;
+    return null_basis_matrices;
 }
 
 lie_algebra* lie_algebra::bracket_with_sl() { // Needs to be changed if we decide to go the other way about making sl a static member
@@ -310,8 +315,8 @@ lie_algebra* compute_centralizer_element(g::matrix x, lie_algebra *N) {
         old_basis[i] = lin_alg::bracket(x, old_basis[i]);
     }
     g::matrix m = lin_alg::basis_to_vectorized_matrix(old_basis);
-    std::vector< g::exvector > vec_null_basis = lin_alg::nullspace(m);
-    for (g::exvector v : vec_null_basis) {
+    std::vector< g::matrix > vec_null_basis = lin_alg::nullspace(m);
+    for (g::matrix v : vec_null_basis) {
         basis.push_back(lin_alg::matricize(v, N->get_sl_size(), N->get_sl_size())); //TODO: why you like this ginac
     }
     lie_algebra* l = new lie_algebra(basis, true);

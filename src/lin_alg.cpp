@@ -50,6 +50,24 @@ namespace lin_alg{
         return x;
     }
 
+    g::matrix matricize(g::matrix &v, unsigned int r, unsigned int c, bool rowcol){
+        g::matrix x(r,c);
+        if (rowcol == false){
+            for(int i  = 0; i < r; i++){
+                for(int j = 0; j < c; j++){
+                    x.set(i,j, v(i*c + j,0));
+                }
+            }
+        } else {
+            for(int i  = 0; i < c; i++){
+                for(int j = 0; j < r; j++){
+                    x.set(j,i, v(i*r + j,0));
+                }
+            }
+        }
+        return x;
+    }
+
     g::matrix vector_to_matrix(g::exvector &v, std::vector< g::matrix > &basis){
         // Convert a vector to a matrix in a given basis
         if(v.size() != basis.size()){
@@ -165,11 +183,16 @@ namespace lin_alg{
 
             if (pivot_row != -1){
                 swap_rows(&mat_temp, numNonZeroCols, pivot_row);
-                for (int j = numNonZeroCols+1; j < mat_temp.rows(); j++){
+                for (int j = 0; j < mat_temp.rows(); j++){
+                    if (j == numNonZeroCols) {
+                        continue;
+                    }
                     // Subtract the ith row from the jth row
                     g::ex temp_first_ex = mat_temp(j,i);
-                    for (int k = i; k < mat_temp.cols(); k++){ 
-                        mat_temp.set(j,k,(mat_temp(j,k) * mat_temp(numNonZeroCols,i)) - mat_temp(numNonZeroCols,k) * temp_first_ex);
+                    if (!temp_first_ex.is_zero()){
+                        for (int k = i; k < mat_temp.cols(); k++){ 
+                            mat_temp.set(j,k,(mat_temp(j,k) * mat_temp(numNonZeroCols,i)) - mat_temp(numNonZeroCols,k) * temp_first_ex);
+                        }
                     }
                 }
 
@@ -202,91 +225,58 @@ namespace lin_alg{
         return rk;
     }
 
-    std::vector< g::exvector > nullspace(g::matrix &matrix){
+    std::vector< g::matrix > nullspace(g::matrix &matrix, bool division){
         // Return a basis of the nullspace of the given matrix
 
         // Compute the gaussian elimination of the matrix
         g::matrix temp = gaussian_elimination(matrix);
 
         // Initialize the nullspace basis        
-        std::vector< g::exvector > nullspace_basis;
+        std::vector< g::matrix > nullspace_basis;
 
-        // The nullspace of the matrix is the columns after the pivots
-        // minus e_i where i the i is the numNonZeroRows plus the number
-        // of columns past the last pivot. We then multiply the result
-        // such that there is no division.
+        // Go through the matrix, store the pivot columns and for each non-pivot column, add the corresponding vector to the nullspace basis
+        std::vector< int > pivot_columns;
+        g::exvector pivots;
 
-        // Find the number of columns before the nullspace starts
-        // and store the pivots and the columns they are in
-        std::vector< g::ex > pivots;
-        std::vector< int > pivot_cols;
-        int colVal = 0;
-        int rk = 0;
-        for(int i = 0; i < temp.rows(); i++){
-            for(int j = colVal; j < temp.cols(); j++){
-                if(!temp(i,j).is_zero()){
-                    rk++;
-                    colVal = j+1;
-                    pivot_cols.push_back(j);
-                    pivots.push_back(temp(i,j));
-                    break;
-                }
+        int col = 0;
+        int row = 0;
+
+        while (col < temp.cols() && row < temp.rows()) {
+            if(!temp(row, col).is_zero()){
+                pivot_columns.push_back(col);
+                pivots.push_back(temp(row,col));
+                row++;
+            }
+            col++;
+        }
+        
+        g::ex total_product = 1;
+        if (!division) {
+            for (g::ex v : pivots){
+                total_product *= v;
             }
         }
-
-        // Find the columns that are not pivots before the nullspace starts
-        // and add them to the nullspace basis
-        colVal = 0;
-        for(int i = 0; i < rk; i++){
-            for(int j = colVal; j < temp.cols(); j++){
-                if(!temp(i,j).is_zero()){
-                    colVal = j+1;
-                    break;
-                } else {
-                    // Generate the basis vector corresponding to the column
-                    g::exvector nullspace_vector;
-                    for (int k = 0; k < temp.cols(); k++){
-                        if (k == j){
-                            nullspace_vector.push_back(1);
-                        } else {
-                            nullspace_vector.push_back(0);
-                        }
-                    }
-                    // Add the basis vector to the nullspace basis
-                    nullspace_basis.push_back(nullspace_vector);
-                }
+        
+        int num_current_pivots = 0;
+        for (int i = 0; i < temp.cols(); i++){
+            if (num_current_pivots < pivot_columns.size() && i == pivot_columns[num_current_pivots]){
+                num_current_pivots++;
+                continue;
             }
-        }
 
-        // Compute the product of the pivots
-        g::ex totalProduct = 1;
-        for (g::ex pivot : pivots){
-            totalProduct *= pivot;
-        }
-
-        for (int i = colVal; i < temp.cols(); i++){
-            // Initialize the nullspace vector
-            g::exvector nullspace_vector;
-            std::vector< int >::iterator pivot_it = pivot_cols.begin();
-            int pivot_ind = 0;
-            for (int j = 0; j < temp.cols(); j++){
-                // Add the correct multiplying factor times the element in the column
-                if (pivot_it != pivot_cols.end() && j == *pivot_it){
-                    nullspace_vector.push_back(temp(pivot_ind,i)*totalProduct/pivots[pivot_ind]);
-                    pivot_it++; pivot_ind++;
-                }
-                // Add the negative of the total product
-                else if (j == colVal){
-                    nullspace_vector.push_back(-totalProduct);
-                }
-                // Add 0's
-                else{
-                    nullspace_vector.push_back(0);
-                }
+            g::matrix nullspace_vector = g::matrix(temp.cols(), 1);
+            for (int j = 0; j < num_current_pivots; j++){
+                nullspace_vector(pivot_columns[j],0) = -temp(j,i) / pivots[j];
             }
+            nullspace_vector(i,0) = 1;
+
+            if (!division){
+                nullspace_vector = nullspace_vector.mul_scalar(total_product);
+            }
+
             nullspace_basis.push_back(nullspace_vector);
         }
-
+        
         return nullspace_basis;
     }
     
@@ -315,4 +305,27 @@ namespace lin_alg{
         }
         return out;
     }
+
+    
+    bool contains(std::vector< g::exvector >* A, std::vector< g::exvector >* B) {
+        if (A->size() > B->size() ) {
+            return false;
+        }
+        std::vector< g::exvector > vectors = {};
+
+        vectors.insert(vectors.end(), A->begin(), A->end());
+        vectors.insert(vectors.end(), B->begin(), B->end());
+
+        std::vector< g::matrix > vectors2 = {};
+        for (g::exvector v : vectors) {
+            vectors2.push_back(matricize(v,1,v.size()));
+        }
+        // Makes a matrix whose rows are the elements of A and B.
+        g::matrix M = lin_alg::basis_to_vectorized_matrix(vectors2);
+
+        // span(B) is a subset of span(A) iff dim(span(A))=dim(span(L)+span(N)), but that is to say rank(e_1,...,e_n)
+        // = rank(S). Taking transposes this is what we actually verify.
+        return A->size() == lin_alg::rank(M);
+    }
+
 };

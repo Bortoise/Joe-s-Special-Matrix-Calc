@@ -12,6 +12,8 @@ namespace g = GiNaC;
 namespace utils{
     void print_matrix(g::matrix &m);
     void print_exvectors(std::vector< g::exvector > &v);
+    void print_exvector(g::exvector &v);
+    void print_column_matrices(std::vector< g::matrix > &v);
     void print_matrices(std::vector< g::matrix > m);
 }
 
