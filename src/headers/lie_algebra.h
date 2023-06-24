@@ -13,7 +13,7 @@ class lie_algebra { // We always refer the lie algebra we are working with L.
     private:
         int sl_size;
         int dim; /** Dimension of the lie algebra, L */
-        std::vector< g::matrix > basis; /** Basis for sub algebra of sl(n).*/
+        mat_vec basis; /** Basis for sub algebra of sl(n).*/
         stdx::optional< std::vector< lie_algebra* > > derived_series;
         stdx::optional< std::vector< lie_algebra* > > lower_central_series;
         stdx::optional< lie_algebra* > normalizer;
@@ -28,12 +28,12 @@ class lie_algebra { // We always refer the lie algebra we are working with L.
          *
          * @note ensure all elements of generators are square matrices of the same size
          */
-        lie_algebra(std::vector< g::matrix > generators, bool _basis=false ); //algebra from generators (set basis to false if going from set of generators)
+        lie_algebra(mat_vec generators, bool _basis=false ); //algebra from generators (set basis to false if going from set of generators)
         /** DESTROYS the lie algebra after.*/
         ~lie_algebra();
 
         /** Returns a (shallow) copy of the basis. */
-        std::vector<g::matrix> get_basis();
+        mat_vec get_basis();
         /** Returns sl_size. */
         [[nodiscard]] int get_sl_size() const;
         /** Returns dim = basis.size() */
@@ -49,7 +49,13 @@ class lie_algebra { // We always refer the lie algebra we are working with L.
          * @param x A sl_size by sl_size matrix.
          * @param M A lie algebra contains L.
          */
-        std::vector< g::matrix > compute_normalizer_element(g::matrix x, std::vector< g::matrix > M);
+        mat_vec compute_normalizer_element(g::matrix x, mat_vec M);
+        g::matrix compute_normalizer_element1(g::matrix x, mat_vec M);
+        mat_vec compute_normalizer_element2(g::matrix x, mat_vec M);
+        g::matrix compute_normalizer_element3(g::matrix x, mat_vec M);
+        g::matrix compute_normalizer_element4(g::matrix x, mat_vec M);
+        g::matrix compute_normalizer_element5(g::matrix x, mat_vec M);
+        mat_vec compute_normalizer_element6(g::matrix x, mat_vec M);
 
         /** Computes the centralizer in sl(n), C_{sl(n)}(L), and stores it in this->centralizer. */
         lie_algebra* compute_centralizer();
@@ -84,7 +90,7 @@ class lie_algebra { // We always refer the lie algebra we are working with L.
          * @param M A lie algebra containing L.
          * @return A basis of M extending the basis for L.
          */
-        std::vector< g::matrix > extend_basis(lie_algebra* M);
+        mat_vec extend_basis(lie_algebra* M);
 };
 
 
@@ -95,7 +101,7 @@ class lie_algebra { // We always refer the lie algebra we are working with L.
  * @param N A lie-subalgebra of sl(sl_size).
  * @return Returns C_N(x)
  */
-lie_algebra* compute_centralizer_element(g::matrix x, lie_algebra* N);
+mat_vec compute_centralizer_element(g::matrix x, mat_vec N);
 /** Returns the bracket of two lie algebras of sl(n). */
 lie_algebra* bracket_lie_algebras(lie_algebra* algebra1, lie_algebra* algebra2);
 //lie_algebra sl_basis(int dim);

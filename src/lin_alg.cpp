@@ -4,7 +4,7 @@
 
 namespace lin_alg{
 
-    g::matrix basis_to_vectorized_matrix(std::vector< g::matrix > &basis) {
+    g::matrix basis_to_vectorized_matrix(mat_vec &basis) {
         if (basis.empty()) {
             return {0,0};
         }
@@ -68,7 +68,7 @@ namespace lin_alg{
         return x;
     }
 
-    g::matrix vector_to_matrix(g::exvector &v, std::vector< g::matrix > &basis){
+    g::matrix vector_to_matrix(g::exvector &v, mat_vec &basis){
         // Convert a vector to a matrix in a given basis
         if(v.size() != basis.size()){
             throw("Error: vector size does not match basis size");
@@ -81,7 +81,7 @@ namespace lin_alg{
         return rtn;
     }
 
-    g::matrix vector_to_matrix(g::matrix &v, std::vector< g::matrix > &basis){
+    g::matrix vector_to_matrix(g::matrix &v, mat_vec &basis){
         // Convert a vector to a matrix in a given basis
         if(v.nops() != basis.size()){
             throw("Error: vector size does not match basis size");
@@ -99,9 +99,9 @@ namespace lin_alg{
         return x.mul(y).sub(y.mul(x)); 
     }
 
-    std::vector< g::matrix > spanning_subsequence(std::vector< g::matrix > &matrices){
+    mat_vec spanning_subsequence(mat_vec &matrices){
         if(matrices.empty()) {
-            return std::vector< g::matrix >();
+            return mat_vec();
         }
         // Remove linear dependences from a set of matrices
         std::vector< g::exvector > vectorized;
@@ -121,7 +121,7 @@ namespace lin_alg{
         }
 
         temp = gaussian_elimination(temp);
-        std::vector< g::matrix > rtn; 
+        mat_vec rtn; 
         int csd = 0;
         for(int i = 0; i < temp.cols(); i++){
             for(int j = csd; j < temp.rows(); j++){
@@ -225,14 +225,14 @@ namespace lin_alg{
         return rk;
     }
 
-    std::vector< g::matrix > nullspace(g::matrix &matrix, bool division){
+    mat_vec nullspace(g::matrix &matrix, bool division){
         // Return a basis of the nullspace of the given matrix
 
         // Compute the gaussian elimination of the matrix
         g::matrix temp = gaussian_elimination(matrix);
 
         // Initialize the nullspace basis        
-        std::vector< g::matrix > nullspace_basis;
+        mat_vec nullspace_basis;
 
         // Go through the matrix, store the pivot columns and for each non-pivot column, add the corresponding vector to the nullspace basis
         std::vector< int > pivot_columns;
@@ -316,7 +316,7 @@ namespace lin_alg{
         vectors.insert(vectors.end(), A->begin(), A->end());
         vectors.insert(vectors.end(), B->begin(), B->end());
 
-        std::vector< g::matrix > vectors2 = {};
+        mat_vec vectors2 = {};
         for (g::exvector v : vectors) {
             vectors2.push_back(matricize(v,1,v.size()));
         }
@@ -328,4 +328,11 @@ namespace lin_alg{
         return A->size() == lin_alg::rank(M);
     }
 
+    bool equals(std::vector< g::exvector >* A, std::vector< g::exvector >* B){
+        if (A->size() != B->size() ) {
+            return false;
+        }
+
+        return contains(A, B) && contains(B, A);
+    }
 };

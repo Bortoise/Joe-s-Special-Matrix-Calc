@@ -35,7 +35,7 @@ namespace utils{
         std::cout<<")"<<std::endl;
     }
 
-    void print_column_matrices(std::vector< g::matrix > &v){
+    void print_column_matrices(mat_vec &v){
         for (g::matrix m : v){
             std::cout<<"(";
             for (int i = 0; i < m.rows(); i++){
@@ -46,7 +46,7 @@ namespace utils{
         }
     }
 
-    void print_matrices(std::vector< g::matrix > m){
+    void print_matrices(mat_vec m){
         for (g::matrix i : m){
             print_matrix(i);
             std::cout << std::endl;

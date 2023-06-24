@@ -33,4 +33,5 @@ namespace stdx {
 #include <ginac/power.h>
 #include <ginac/operators.h>
 
-namespace g = GiNaC;
+namespace g = GiNaC; 
+typedef std::vector< g::matrix > mat_vec;

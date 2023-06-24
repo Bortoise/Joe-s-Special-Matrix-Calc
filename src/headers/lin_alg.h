@@ -17,11 +17,11 @@ namespace lin_alg{
      * @param matrices A list of matrices
      * @return basis A basis for span(matrices) which is also a subsequence of (matrices)
      */
-    std::vector< g::matrix > spanning_subsequence(std::vector< g::matrix > &matrices);
+    mat_vec spanning_subsequence(mat_vec &matrices);
     
-    std::vector< g::matrix > is_linearly_ind(std::vector< g::matrix > &matrices);
-    std::vector< g::matrix > intersect(std::vector< g::matrix > &matrices1, std::vector< g::matrix > &matrices2);
-    std::vector< g::matrix > symbolic_matrix_to_basis();
+    mat_vec is_linearly_ind(mat_vec &matrices);
+    mat_vec intersect(mat_vec &matrices1, mat_vec &matrices2);
+    mat_vec symbolic_matrix_to_basis();
 
     /**
      * @brief Converts a matrix to a vector in a basis whose elements are matrices
@@ -31,7 +31,7 @@ namespace lin_alg{
      * 
      * @return A vector representing the matrix with respect to the given basis
      */
-    g::exvector matrix_to_vector_in_basis(g::matrix &m, std::vector< g::matrix > &basis);
+    g::exvector matrix_to_vector_in_basis(g::matrix &m, mat_vec &basis);
 
     /** 
      * @brief Swaps the i-th and j-th rows of m in place.
@@ -72,7 +72,7 @@ namespace lin_alg{
      * @param m A matrix.
      * @return A basis of the nullspace of m.
      */
-    std::vector< g::matrix > nullspace(g::matrix &m, bool division = true);
+    mat_vec nullspace(g::matrix &m, bool division = true);
 
     g::exvector vectorize(g::matrix &m);
 
@@ -106,15 +106,15 @@ namespace lin_alg{
      * @param basis The list of matrices to multiply the vector against
      * @return The matrix represented by the vector v in the given basis
      */
-    g::matrix vector_to_matrix(g::exvector &v, std::vector< g::matrix > &basis);
-    g::matrix vector_to_matrix(g::matrix &v, std::vector< g::matrix > &basis);
+    g::matrix vector_to_matrix(g::exvector &v, mat_vec &basis);
+    g::matrix vector_to_matrix(g::matrix &v, mat_vec &basis);
 
     /** Returns the matrix with the given matrices vectorized then put in as rows.
      * //TODO: finish docstring
      * @param basis
      * @return
      */
-    g::matrix basis_to_vectorized_matrix(std::vector< g::matrix > &basis);
+    g::matrix basis_to_vectorized_matrix(mat_vec &basis);
 
     /** Computes the tr(ab) assuming that the product ab makes sense and produces a square matrix*/
     g::ex prod_trace(g::matrix a, g::matrix b);
@@ -124,6 +124,16 @@ namespace lin_alg{
     *
     */
     bool contains(std::vector< g::exvector >* A, std::vector< g::exvector >* B);
+
+    /**
+     * @brief Checks if A = B
+     * 
+     * @param A basis of A
+     * @param B basis of B
+     * @return true if A = B aas subspaces
+     * @return false if A != B as subspaces
+     */
+    bool equals(std::vector< g::exvector >* A, std::vector< g::exvector >* B);
 };
 
 #endif //JOEMATRIXCALC_LIN_ALG_H
