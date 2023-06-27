@@ -43,7 +43,7 @@ namespace lin_alg{
      * @warning If m has k rows then we need 0<= i,j < k.
      * @note This function modifies the matrix m.
      */
-    void swap_rows(g::matrix* m, int i, int j);
+    void swap_rows(g::matrix &m, int i, int j);
    
     /**
      * @brief Construct a the gaussian elimination of the given matrix.
@@ -71,6 +71,9 @@ namespace lin_alg{
      * 
      * @param m A matrix.
      * @return A basis of the nullspace of m.
+     * 
+     * @note currently we use .normal() at all times this may or may not be slow, we need to test this.
+     * @warning division = true does not work. It does not simplify rational expressions to 0. We know how to fix this (call GiNaC .normal() on all expression that may contain rational expressions), but have not gotten around to it yet.
      */
     mat_vec nullspace(g::matrix &m, bool division = true);
 

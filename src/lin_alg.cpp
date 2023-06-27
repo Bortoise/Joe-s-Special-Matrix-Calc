@@ -138,12 +138,12 @@ namespace lin_alg{
 
     }
 
-    void swap_rows(g::matrix *mat, int row1, int row2){
+    void swap_rows(g::matrix &mat, int row1, int row2){
         // Swap two rows in a matrix
-        for (int i = 0; i < mat->cols(); i++){
-            g::ex temp = (*mat)(row1,i);
-            (*mat)(row1,i) = (*mat)(row2,i);
-            (*mat)(row2,i) = temp;
+        for (int i = 0; i < mat.cols(); i++){
+            g::ex temp = mat(row1,i);
+            mat(row1,i) = mat(row2,i);
+            mat(row2,i) = temp;
         }
     }
 
@@ -153,13 +153,6 @@ namespace lin_alg{
         // Make a deep copy of the matrix to perform operations on
         g::matrix mat_temp = g::matrix(mat.rows(), mat.cols());    
 
-        // Initialize the pivot and pivot row
-        g::ex pivot;
-        int pivot_row;
-
-        // Initialize the number of non-zero columns, where to search for the pivot
-        int numNonZeroCols = 0;
-
         // Copies the matrix
         for (int i = 0; i < mat.rows(); i++){
             for (int j = 0; j < mat.cols(); j++){
@@ -167,11 +160,18 @@ namespace lin_alg{
             }
         }
 
+        // Initialize the pivot and pivot row
+        g::ex pivot;
+        int pivot_row;
+
+        // Initialize the number of non-zero columns, where to search for the pivot
+        int numNonZeroCols = 0;
+
         for (int i = 0; i < mat_temp.cols(); i++){
             // Find a pivot in the ith column
 
             pivot = 0;
-            pivot_row = -1;
+            pivot_row = -1;     
             for (int j = numNonZeroCols; j < mat_temp.rows(); j++){
                 // Check if the pivot is non-zero
                 if (!mat_temp(j,i).is_zero()){
@@ -182,16 +182,16 @@ namespace lin_alg{
             }
 
             if (pivot_row != -1){
-                swap_rows(&mat_temp, numNonZeroCols, pivot_row);
+                swap_rows(mat_temp, numNonZeroCols, pivot_row); // SUSPICIOUS 
                 for (int j = 0; j < mat_temp.rows(); j++){
                     if (j == numNonZeroCols) {
                         continue;
                     }
-                    // Subtract the ith row from the jth row
                     g::ex temp_first_ex = mat_temp(j,i);
+                    // Subtracts an appropriate multiple of the numNonZeroCols-th row from an appropriate multiple of the jth row
                     if (!temp_first_ex.is_zero()){
-                        for (int k = i; k < mat_temp.cols(); k++){ 
-                            mat_temp.set(j,k,(mat_temp(j,k) * mat_temp(numNonZeroCols,i)) - mat_temp(numNonZeroCols,k) * temp_first_ex);
+                        for (int k = 0; k < mat_temp.cols(); k++){ 
+                            mat_temp.set(j,k,(mat_temp(j,k) * pivot) - (mat_temp(numNonZeroCols,k) * temp_first_ex));
                         }
                     }
                 }
@@ -208,21 +208,15 @@ namespace lin_alg{
         g::matrix temp = gaussian_elimination(matrix);
 
         // Initialize the number of non-zero rows and the column value to start searching for non-zero values
-        int rk = 0;
-        int colVal = 0;
-        
-        // Go through each row starting from the column the previous row ended at and move until the next non-zero value is found.
-        for(int i = 0; i < temp.rows(); i++){
-            for(int j = colVal; j < temp.cols(); j++){
-                if(!temp(i,j).is_zero()){
-                    rk++;
-                    colVal = j+1;
-                    break;
-                }
-            }
+        int col = 0;
+        int row = 0;
+
+        while (col < temp.cols() && row < temp.rows()) {
+            if (!temp(row, col).is_zero()) row++;
+            col++;
         }
 
-        return rk;
+        return row;
     }
 
     mat_vec nullspace(g::matrix &matrix, bool division){
@@ -242,7 +236,7 @@ namespace lin_alg{
         int row = 0;
 
         while (col < temp.cols() && row < temp.rows()) {
-            if(!temp(row, col).is_zero()){
+            if(!temp(row, col).normal().is_zero()){
                 pivot_columns.push_back(col);
                 pivots.push_back(temp(row,col));
                 row++;
@@ -250,11 +244,19 @@ namespace lin_alg{
             col++;
         }
         
-        g::ex total_product = 1;
-        if (!division) {
-            for (g::ex v : pivots){
-                total_product *= v;
+        g::exvector total_product = {};
+        for (int i = 0; i < pivots.size(); i++){
+            g::ex temp_total_product = 1;
+            if (!division) {
+                for (int j = 0; j < pivots.size(); j++){
+                    if (i != j){
+                        temp_total_product = temp_total_product * pivots[j];
+                    }
+                }
+            } else {
+                temp_total_product = 1/pivots[i];
             }
+            total_product.push_back(temp_total_product);
         }
         
         int num_current_pivots = 0;
@@ -266,13 +268,9 @@ namespace lin_alg{
 
             g::matrix nullspace_vector = g::matrix(temp.cols(), 1);
             for (int j = 0; j < num_current_pivots; j++){
-                nullspace_vector(pivot_columns[j],0) = -temp(j,i) / pivots[j];
+                nullspace_vector(pivot_columns[j],0) = -(temp(j,i) * total_product[j]).normal();
             }
             nullspace_vector(i,0) = 1;
-
-            if (!division){
-                nullspace_vector = nullspace_vector.mul_scalar(total_product);
-            }
 
             nullspace_basis.push_back(nullspace_vector);
         }
