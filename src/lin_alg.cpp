@@ -22,6 +22,7 @@ namespace lin_alg{
         return out;
     }
 
+
     g::exvector vectorize(g::matrix &m){
         g::exvector v;
         for(int i = 0; i < m.nops(); i++){
@@ -332,5 +333,29 @@ namespace lin_alg{
         }
 
         return contains(A, B) && contains(B, A);
+    }
+
+    bool equals(mat_vec* A, mat_vec* B){
+        std::vector< g::exvector > A2 = {};
+        std::vector< g::exvector > B2 = {};
+
+        for (g::matrix m : *A) {
+            A2.push_back(vectorize(m));
+        }
+        for (g::matrix m : *B) {
+            B2.push_back(vectorize(m));
+        }
+
+        return equals(&A2, &B2);
+    }
+
+    bool equals(mat_vec* A, std::vector< g::exvector >* B){
+        std::vector< g::exvector > A2 = {};
+
+        for (g::matrix m : *A) {
+            A2.push_back(vectorize(m));
+        }
+
+        return equals(&A2, B);
     }
 };

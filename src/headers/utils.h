@@ -15,6 +15,14 @@ namespace utils{
     void print_exvector(g::exvector &v);
     void print_column_matrices(mat_vec &v);
     void print_matrices(mat_vec m);
+
+    
+    /** Tests if two matrices are equal. */
+    bool matrix_eq(g::matrix &m, g::matrix &n);
+
+    
+    /** Tests if two exvectors are equal. */
+    bool exvector_eq(g::exvector &v, g::exvector &w);
 }
 
 #endif // JOEMATRIXCALC_UTILS_H

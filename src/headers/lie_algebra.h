@@ -50,12 +50,6 @@ class lie_algebra { // We always refer the lie algebra we are working with L.
          * @param M A lie algebra contains L.
          */
         mat_vec compute_normalizer_element(g::matrix x, mat_vec M);
-        g::matrix compute_normalizer_element1(g::matrix x, mat_vec M);
-        mat_vec compute_normalizer_element2(g::matrix x, mat_vec M);
-        g::matrix compute_normalizer_element3(g::matrix x, mat_vec M);
-        g::matrix compute_normalizer_element4(g::matrix x, mat_vec M);
-        g::matrix compute_normalizer_element5(g::matrix x, mat_vec M);
-        mat_vec compute_normalizer_element6(g::matrix x, mat_vec M);
 
         /** Computes the centralizer in sl(n), C_{sl(n)}(L), and stores it in this->centralizer. */
         lie_algebra* compute_centralizer();

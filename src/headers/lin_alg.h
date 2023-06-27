@@ -9,8 +9,6 @@ namespace lin_alg{
     /** Computes the lie bracket mn-nm. */
     g::matrix bracket(g::matrix &m, g::matrix &n);
 
-
-
      /**
      * @brief Returns a vector representing a subsequence of matrices 
      * 
@@ -133,10 +131,12 @@ namespace lin_alg{
      * 
      * @param A basis of A
      * @param B basis of B
-     * @return true if A = B aas subspaces
+     * @return true if A = B as subspaces
      * @return false if A != B as subspaces
      */
     bool equals(std::vector< g::exvector >* A, std::vector< g::exvector >* B);
+    bool equals(mat_vec* A, mat_vec* B);
+    bool equals(mat_vec* A, std::vector< g::exvector >* B);
 };
 
 #endif //JOEMATRIXCALC_LIN_ALG_H

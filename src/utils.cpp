@@ -52,4 +52,21 @@ namespace utils{
             std::cout << std::endl;
         }
     }
+
+    bool matrix_eq(g::matrix &m, g::matrix &n) {
+        return m.sub(n).is_zero_matrix();
+    }
+
+    
+    bool exvector_eq(g::exvector &v, g::exvector &w) {
+        if (v.size() != w.size()) {
+            return false;
+        }
+        for(int i = 0; i < v.size(); i++) {
+            if (!(v[i]-w[i]).is_zero()) {
+                return false;
+            }
+        }
+        return true;
+    }
 };

@@ -7,6 +7,43 @@
 #include <random>
 
 
+lie_algebra* get_L5_1() {
+    g::matrix a = {{1,4,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,-3}};
+    g::matrix b = {{0,1,0,0},{0,0,1,0},{0,0,0,0},{0,0,0,0}};
+    g::matrix c = {{0,0,1,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
+    std::vector< g::matrix> matrices = {a,b,c};
+    lie_algebra* out = new lie_algebra(matrices);
+    return out;
+}
+
+lie_algebra* get_L5_2() {
+    g::matrix a = {{1,0,0,0},{0,1,0,4},{0,0,-3,0},{0,0,0,1}};
+    g::matrix b = {{0,1,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
+    g::matrix c = {{0,0,0,1},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
+    std::vector< g::matrix> matrices = {a,b,c};
+    lie_algebra* out = new lie_algebra(matrices);
+    return out;
+}
+
+lie_algebra* get_L5_4(g::symbol x) {
+    g::matrix a = {{0,1,0,0},{0,0,1,0},{0,0,0,1},{0,0,0,0}};
+    g::matrix b = {{0,0,x,0},{0,0,0,x+1},{0,0,0,0},{0,0,0,0}};
+    g::matrix c = {{0,0,0,1},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
+    std::vector< g::matrix> matrices = {a,b,c};
+    lie_algebra* out = new lie_algebra(matrices);
+
+    return out;
+}
+
+lie_algebra* get_L5_5(g::symbol x) {
+    g::matrix a = {{0,1,0,0},{0,0,0,0},{0,0,0,1},{0,0,0,0}};
+    g::matrix b = {{0,0,x,0},{0,0,0,x+1},{0,0,0,0},{0,0,0,0}};
+    g::matrix c = {{0,0,0,1},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
+    std::vector< g::matrix> matrices = {a,b,c};
+    lie_algebra* out = new lie_algebra(matrices);
+    return out;
+}
+
 void test_spanning_subsequence(){
     g::symbol x("x");
     g::symbol y("y");
@@ -44,25 +81,25 @@ void test_lie_alg_equals() {
     lie_algebra alg_1 = {{a,b,c}};
     lie_algebra alg_2 = {{b,c}};
     if(! alg_1.equals(&alg_2) ) {
-        throw std::invalid_argument("I goofed");
+        throw std::runtime_error("I goofed");
     }
     lie_algebra alg_3 = {{a}};
     if ( alg_1.equals(&alg_3)) {
-        throw std::invalid_argument("I goofed");
+        throw std::runtime_error("I goofed");
     }
 }
 
 void test_get_sl(int n) {
     lie_algebra* sl = lie_algebra::get_sl(n);
     if (sl->get_dim() != n*n-1) {
-        throw std::invalid_argument("I goofed");
+        throw std::runtime_error("I goofed");
     }
 }
 
 void test_bracket_algebra_sl_sl(int n) {
     lie_algebra* sl = lie_algebra::get_sl(n);
     if (! sl->equals(bracket_lie_algebras(sl, sl))) {
-        throw std::invalid_argument("I goofed");
+        throw std::runtime_error("I goofed");
     }
 }
 
@@ -117,7 +154,6 @@ void test_get_normalizer_element() {
     utils::print_matrices(b_brackets);
 }
 
-
 void test_gaussian_elimination(){
     g::symbol x("x");
     g::symbol y("y");
@@ -138,30 +174,29 @@ void test_gaussian_elimination(){
     g::matrix gaussian_d_computed = lin_alg::gaussian_elimination(d);
     g::matrix gaussian_e_computed = lin_alg::gaussian_elimination(e);
 
-    std::cout << "Printing a" << std::endl;
-    utils::print_matrix(a);
-    std::cout << "Printing gaussian(a)" << std::endl;
-    utils::print_matrix(gaussian_a_computed);
+    g::matrix gaussian_a_actual = {{0,0,0},{0,0,0},{0,0,0}};
+    g::matrix gaussian_b_actual = {{1,1,1},{0,0,0},{0,0,0}};
+    g::matrix gaussian_c_actual = {{x,0,0},{0,0,y}};
+    g::matrix gaussian_d_actual = {{0,0},{0,0},{0,0}};
+    g::matrix gaussian_e_actual = {{-1,0,0,0,1,0,0,0},{0,1,0,0,0,0,0,0},{0,0,0,1,0,0,0,0},{0,0,0,0,0,1,0,0},
+                                        {0,0,0,0,0,0,-2,-1},{0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,0}};
+                                        
 
-    std::cout << "Printing b" << std::endl;
-    utils::print_matrix(b);
-    std::cout << "Printing gaussian(b)" << std::endl;
-    utils::print_matrix(gaussian_b_computed);
-
-    std::cout << "Printing c" << std::endl;
-    utils::print_matrix(c);
-    std::cout << "Printing gaussian(c)" << std::endl;
-    utils::print_matrix(gaussian_c_computed);
-
-    std::cout << "Printing d" << std::endl;
-    utils::print_matrix(d);
-    std::cout << "Printing gaussian(d)" << std::endl;
-    utils::print_matrix(gaussian_d_computed);
-
-    std::cout << "Printing e" << std::endl;
-    utils::print_matrix(e);
-    std::cout << "Printing gaussian(e)" << std::endl;
-    utils::print_matrix(gaussian_e_computed);
+    if(!utils::matrix_eq(gaussian_a_computed, gaussian_a_actual)) {
+        throw std::runtime_error("gaussian_elimination fails on a");
+    }
+    if(!utils::matrix_eq(gaussian_b_computed, gaussian_b_actual)) {
+        throw std::runtime_error("gaussian_elimination fails on b");
+    }
+    if(!utils::matrix_eq(gaussian_c_computed, gaussian_c_actual)) {
+        throw std::runtime_error("gaussian_elimination fails on c");
+    }
+    if(!utils::matrix_eq(gaussian_d_computed, gaussian_d_actual)) {
+        throw std::runtime_error("gaussian_elimination fails on d");
+    }
+    if(!utils::matrix_eq(gaussian_e_computed, gaussian_e_actual)) {
+        throw std::runtime_error("gaussian_elimination fails on e");
+    }
 }
 
 void test_nullspace(){
@@ -186,37 +221,32 @@ void test_nullspace(){
     mat_vec null_e_computed = lin_alg::nullspace(e);
     mat_vec null_f_computed = lin_alg::nullspace(f);
 
-    std::cout << "Printing a" << std::endl;
-    utils::print_matrix(a);
-    std::cout << "Printing null(a)" << std::endl;
-    utils::print_column_matrices(null_a_computed);
+    std::vector< g::exvector > null_a_actual = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+    std::vector< g::exvector > null_b_actual = {{1, -1, 0}, {1, 0, -1}};
+    std::vector< g::exvector > null_c_actual = {{0, 1, 0}};
+    std::vector< g::exvector > null_d_actual = {{1, 0}, {0, 1}};
+    std::vector< g::exvector > null_e_actual = {{1, -x, 0}};
+    std::vector< g::exvector > null_f_actual = {{0,0,1,0,0,0,0,0},{1,0,0,0,1,0,0,0},{0,0,0,0,0,0,-1,2}};
 
-    std::cout << "Printing b" << std::endl;
-    utils::print_matrix(b);
-    std::cout << "Printing null(b)" << std::endl;
-    utils::print_column_matrices(null_b_computed);
 
-    std::cout << "Printing c" << std::endl;
-    utils::print_matrix(c);
-    std::cout << "Printing null(c)" << std::endl;
-    utils::print_column_matrices(null_c_computed);
-
-    std::cout << "Printing d" << std::endl;
-    utils::print_matrix(d);
-    std::cout << "Printing null(d)" << std::endl;
-    utils::print_column_matrices(null_d_computed);
-
-    std::cout << "Printing e" << std::endl;
-    utils::print_matrix(e);
-    std::cout << "Printing null(e)" << std::endl;
-    utils::print_column_matrices(null_e_computed);
-
-    std::cout << "Printing f" << std::endl;
-    utils::print_matrix(f);
-    std::cout << "Printing null(f)" << std::endl;
-    utils::print_column_matrices(null_f_computed);
-
-    std::vector< g::exvector > null_a_actual = {{1,-1,0},{1,0,-1}};    
+    if(!lin_alg::equals(&null_a_computed, &null_a_actual)) {
+        throw std::runtime_error("nullspace fails on a");
+    }
+    if(!lin_alg::equals(&null_b_computed, &null_b_actual)) {
+        throw std::runtime_error("nullspace fails on b");
+    }
+    if(!lin_alg::equals(&null_c_computed, &null_c_actual)) {
+        throw std::runtime_error("nullspace fails on c");
+    }
+    if(!lin_alg::equals(&null_d_computed, &null_d_actual)) {
+        throw std::runtime_error("nullspace fails on d");
+    }
+    if(!lin_alg::equals(&null_e_computed, &null_e_actual)) {
+        throw std::runtime_error("nullspace fails on e");
+    }
+    if(!lin_alg::equals(&null_f_computed, &null_f_actual)) {
+        throw std::runtime_error("nullspace fails on f");
+    }
 }
 
 void test_sl_ize(){
@@ -233,41 +263,47 @@ void test_sl_ize(){
     g::exvector slize_c = lin_alg::sl_ize(c,3);
     g::exvector slize_d = lin_alg::sl_ize(d,4);
 
-    g::matrix a_hopefully = lin_alg::vector_to_matrix(slize_a, sl_basis);
-    g::matrix b_hopefully = lin_alg::vector_to_matrix(slize_b, sl_basis);
-    g::matrix c_hopefully = lin_alg::vector_to_matrix(slize_c, sl_basis);
+    g::exvector slize_a_real = {2,4,3,7,6,8,-5,-9};
+    g::exvector slize_b_real = {0,0,0,0,0,0,0,0};
+    g::exvector slize_c_real = {0,0,0,0,0,0,-1,-1};
+    g::exvector slize_d_real = {3,2,0,0,-6,-2,0,0,4,4,8,0,-1,-1,3};
+
+    g::matrix a_reconstruction = lin_alg::vector_to_matrix(slize_a, sl_basis);
+    g::matrix b_reconstruction = lin_alg::vector_to_matrix(slize_b, sl_basis);
+    g::matrix c_reconstruction = lin_alg::vector_to_matrix(slize_c, sl_basis);
 
     sl = lie_algebra::get_sl(4);
     sl_basis = sl->get_basis();
-    g::matrix d_hopefully = lin_alg::vector_to_matrix(slize_d, sl_basis);
+    g::matrix d_reconstruction = lin_alg::vector_to_matrix(slize_d, sl_basis);
 
-    std::cout << "Printing a" << std::endl;
-    utils::print_matrix(a);
-    std::cout << "Printing sl_ize(a)" << std::endl;
-    utils::print_exvector(slize_a);
-    std::cout << "Printing a?" << std::endl;
-    utils::print_matrix(a_hopefully);
 
-    std::cout << "Printing b" << std::endl;
-    utils::print_matrix(b);
-    std::cout << "Printing sl_ize(b)" << std::endl;
-    utils::print_exvector(slize_b);
-    std::cout << "Printing b?" << std::endl;
-    utils::print_matrix(b_hopefully);
+    // test slize correct
+    if (!utils::exvector_eq(slize_a, slize_a_real)) { 
+        throw std::runtime_error("slize fails on a");
+    }
+    if (!utils::exvector_eq(slize_b, slize_b_real)) {
+        throw std::runtime_error("slize fails on b");
+    }
+    if (!utils::exvector_eq(slize_c, slize_c_real)) {
+        throw std::runtime_error("slize fails on c");
+    }
+    if (!utils::exvector_eq(slize_d, slize_d_real)) {
+        throw std::runtime_error("slize fails on d");
+    }
 
-    std::cout << "Printing c" << std::endl;
-    utils::print_matrix(c);
-    std::cout << "Printing sl_ize(c)" << std::endl;
-    utils::print_exvector(slize_c);      
-    std::cout << "Printing c?" << std::endl;
-    utils::print_matrix(c_hopefully);  
-
-    std::cout << "Printing d" << std::endl;
-    utils::print_matrix(d);
-    std::cout << "Printing sl_ize(d)" << std::endl;
-    utils::print_exvector(slize_d);      
-    std::cout << "Printing d?" << std::endl;
-    utils::print_matrix(d_hopefully);  
+    // test slize is inverse of vector_to_matrix with sl_basis
+    if (!utils::matrix_eq(a, a_reconstruction)) {
+        throw std::runtime_error("slize fails to be an inverse to vector_to_matrix on a");
+    }
+    if (!utils::matrix_eq(b, b_reconstruction)) {
+        throw std::runtime_error("slize fails to be an inverse to vector_to_matrix on b");
+    }
+    if (!utils::matrix_eq(c, c_reconstruction)) {
+        throw std::runtime_error("slize fails to be an inverse to vector_to_matrix on c");
+    }
+    if (!utils::matrix_eq(d, d_reconstruction)) {
+        throw std::runtime_error("slize fails to be an inverse to vector_to_matrix on d");
+    }
 }
 
 void test_matricize(){
@@ -287,98 +323,41 @@ void test_matricize(){
     g::matrix c2_matricize = lin_alg::matricize(c,3,3,true);
     g::matrix d1_matricize = lin_alg::matricize(d,2,3);
     g::matrix d2_matricize = lin_alg::matricize(d,2,3,true);
+
+    g::matrix a1_matricize_true = {{1,2,3,4,5}};
+    g::matrix a2_matricize_true = {{1},{2},{3},{4},{5}};
+    g::matrix b1_matricize_true = {{x,1},{0,2}};
+    g::matrix b2_matricize_true = {{x,0},{1,2}};
     
-    std::cout << "Printing a" << std::endl;
-    utils::print_matrix(a);
-    std::cout << "Printing matricize(a,1,5)" << std::endl;
-    utils::print_matrix(a1_matricize);
-    std::cout << "Printing matricize(a,5,1)" << std::endl;
-    utils::print_matrix(a2_matricize);
-
-    std::cout << "Printing b" << std::endl;
-    utils::print_matrix(b);
-    std::cout << "Printing matricize(b,2,2)" << std::endl;
-    utils::print_matrix(b1_matricize);
-    std::cout << "Printing matricize(b,2,2,true)" << std::endl;
-    utils::print_matrix(b2_matricize);
-
-    std::cout << "Printing c" << std::endl;
-    utils::print_exvector(c);
-    std::cout << "Printing matricize(c,3,3)" << std::endl;
-    utils::print_matrix(c1_matricize);
-    std::cout << "Printing matricize(c,3,3,true)" << std::endl;
-    utils::print_matrix(c2_matricize);
-
-    std::cout << "Printing d" << std::endl;
-    utils::print_exvector(d);
-    std::cout << "Printing matricize(d,2,3)" << std::endl;
-    utils::print_matrix(d1_matricize);
-    std::cout << "Printing matricize(d,2,3,true)" << std::endl;
-    utils::print_matrix(d2_matricize);
-}
-
-lie_algebra* get_L5_1() {
-    g::matrix a = {{1,4,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,-3}};
-    g::matrix b = {{0,1,0,0},{0,0,1,0},{0,0,0,0},{0,0,0,0}};
-    g::matrix c = {{0,0,1,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
-    std::vector< g::matrix> matrices = {a,b,c};
-    lie_algebra* out = new lie_algebra(matrices);
-    return out;
-}
-
-lie_algebra* get_L5_2() {
-    g::matrix a = {{1,0,0,0},{0,1,0,4},{0,0,-3,0},{0,0,0,1}};
-    g::matrix b = {{0,1,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
-    g::matrix c = {{0,0,0,1},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
-    std::vector< g::matrix> matrices = {a,b,c};
-    lie_algebra* out = new lie_algebra(matrices);
-    return out;
-}
-
-lie_algebra* get_L5_4(g::symbol x) {
-    g::matrix a = {{0,1,0,0},{0,0,1,0},{0,0,0,1},{0,0,0,0}};
-    g::matrix b = {{0,0,x,0},{0,0,0,x+1},{0,0,0,0},{0,0,0,0}};
-    g::matrix c = {{0,0,0,1},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
-    std::vector< g::matrix> matrices = {a,b,c};
-    lie_algebra* out = new lie_algebra(matrices);
+    g::matrix c1_matricize_true = {{1,2,3},{4,5,6},{7,8,9}};
+    g::matrix c2_matricize_true = {{1,4,7},{2,5,8},{3,6,9}};
+    g::matrix d1_matricize_true = {{x,2,0},{-x,1,2}};
+    g::matrix d2_matricize_true = {{x,0,1},{2,-x,2}};
     
-    
-    // mat_vec out_basis = out->get_basis();
-    // utils::print_matrices(out_basis);
-    // g::matrix t = {{-3,0,0,0},{0,-1,0,0},{0,0,1,0},{0,0,0,3}};
-    // g::matrix ta = lin_alg::bracket(t,a);
-    // g::matrix tb = lin_alg::bracket(t,b);
-    // g::matrix tc = lin_alg::bracket(t,c);
-    // std::cout << "Printing brackets:" << std::endl;
-    // std::cout << std::endl;
-    // utils::print_matrix(ta);
-    // std::cout << std::endl;
-    // std::cout << std::endl;
-    // utils::print_matrix(tb);
-    // std::cout << std::endl;
-    // std::cout << std::endl;
-    // utils::print_matrix(tc);
-
-    return out;
-}
-
-lie_algebra* get_L5_5(g::symbol x) {
-    g::matrix a = {{0,1,0,0},{0,0,0,0},{0,0,0,1},{0,0,0,0}};
-    g::matrix b = {{0,0,x,0},{0,0,0,x+1},{0,0,0,0},{0,0,0,0}};
-    g::matrix c = {{0,0,0,1},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
-    std::vector< g::matrix> matrices = {a,b,c};
-    lie_algebra* out = new lie_algebra(matrices);
-    return out;
-}
-
-lie_algebra* get_test_alg_1() {
-    g::matrix a = {{0,1,0,0},{0,0,1,0},{0,0,0,1},{0,0,0,0}};
-    g::matrix b = {{0,0,176,0},{0,0,0,176+1},{0,0,0,0},{0,0,0,0}};
-    g::matrix c = {{0,0,0,1},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
-    std::vector< g::matrix> matrices = {a,b,c};
-    lie_algebra* out = new lie_algebra(matrices);
-
-    return out;
+    if(!utils::matrix_eq(a1_matricize, a1_matricize_true)) {
+        throw std::runtime_error("matricize(a,1,5) failed");
+    }
+    if(!utils::matrix_eq(a2_matricize, a2_matricize_true)) {
+        throw std::runtime_error("matricize(a,5,1) failed");
+    }
+    if(!utils::matrix_eq(b1_matricize, b1_matricize_true)) {
+        throw std::runtime_error("matricize(b,2,2) by rows failed");
+    }
+    if(!utils::matrix_eq(b2_matricize,b2_matricize_true)) {
+        throw std::runtime_error("matricize(b,2,2) by cols failed");
+    }
+    if(!utils::matrix_eq(c1_matricize,c1_matricize_true)) {
+        throw std::runtime_error("matricize(c,3,3) by rows failed");
+    }
+    if(!utils::matrix_eq(c2_matricize,c2_matricize_true)) {
+        throw std::runtime_error("matricize(c,3,3) by cols failed");
+    }
+    if(!utils::matrix_eq(d1_matricize,d1_matricize_true)) {
+        throw std::runtime_error("matricize(d,2,3) by rows failed");
+    }
+    if(!utils::matrix_eq(d2_matricize,d2_matricize_true)) {
+        throw std::runtime_error("matricize(d,2,3) by cols failed");
+    }
 }
 
 void test_normalizer() {
@@ -387,13 +366,13 @@ void test_normalizer() {
     lie_algebra* L5_2 = get_L5_2();
     lie_algebra* L5_4 = get_L5_4(x);
     lie_algebra* L5_5 = get_L5_5(x);
-    lie_algebra* test_1 = get_test_alg_1();
+    // lie_algebra* test_1 = get_test_alg_1();
 
     lie_algebra* normalizer_L5_1 = L5_1->compute_normalizer();
     lie_algebra* normalizer_L5_2 = L5_2->compute_normalizer();
     lie_algebra* normalizer_L5_4 = L5_4->compute_normalizer();
     lie_algebra* normalizer_L5_5 = L5_5->compute_normalizer();
-    lie_algebra* normalizer_test_1 = test_1->compute_normalizer();
+    // lie_algebra* normalizer_test_1 = test_1->compute_normalizer();
     
     mat_vec L5_1_normalizer_basis = {
         {{0,  1,  0,  0}, {0,  0,  0,  0}, {0,  0,  0,  0}, {0,  0,  0,  0}}, 
@@ -411,21 +390,12 @@ void test_normalizer() {
     };
 
     mat_vec L5_4_normalizer_basis = {
-        {{0, 0, 1, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}}, //x
-        {{0, (2*x + 1)/(x+1),  0,  0}, {0,  0,  1,  0}, {0,  0,  0,  0}, {0,  0,  0,  0}},//x
-        {{-3,  0,  0,  0}, {0, -1,  0,  0}, {0,  0,  1,  0}, {0,  0,  0,  3}},
-        {{0,  0,  0,  1}, {0,  0,  0,  0}, {0,  0,  0,  0}, {0,  0,  0,  0}},//x
-        {{0,  0,  0,  0}, {0,  0,  0,  1}, {0,  0,  0,  0}, {0,  0,  0,  0}},//x
-        {{0,  -x/(x+1), 0,  0}, {0,  0,  0,  0}, {0,  0,  0,  1}, {0,  0,  0, 0}}//x
-    };
-
-    mat_vec test_1_normalizer_basis = {
-        {{0, 0, 1, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}}, //x
-        {{0, (2*176 + 1)/(176+1),  0,  0}, {0,  0,  1,  0}, {0,  0,  0,  0}, {0,  0,  0,  0}},//x
-        {{-3,  0,  0,  0}, {0, -1,  0,  0}, {0,  0,  1,  0}, {0,  0,  0,  3}},
-        {{0,  0,  0,  1}, {0,  0,  0,  0}, {0,  0,  0,  0}, {0,  0,  0,  0}},//x
-        {{0,  0,  0,  0}, {0,  0,  0,  1}, {0,  0,  0,  0}, {0,  0,  0,  0}},//x
-        {{0,  -176/(176+1), 0,  0}, {0,  0,  0,  0}, {0,  0,  0,  1}, {0,  0,  0, 0}}//x
+        {{0, 0, 1, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}},                               
+        {{0, (2*x + 1)/(x+1),  0,  0}, {0,  0,  1,  0}, {0,  0,  0,  0}, {0,  0,  0,  0}},      
+        {{-3,  0,  0,  0}, {0, -1,  0,  0}, {0,  0,  1,  0}, {0,  0,  0,  3}},                  
+        {{0,  0,  0,  1}, {0,  0,  0,  0}, {0,  0,  0,  0}, {0,  0,  0,  0}},                   
+        {{0,  0,  0,  0}, {0,  0,  0,  1}, {0,  0,  0,  0}, {0,  0,  0,  0}},                   
+        {{0,  -x/(x+1), 0,  0}, {0,  0,  0,  0}, {0,  0,  0,  1}, {0,  0,  0, 0}}               
     };
 
     mat_vec L5_5_normalizer_basis = {
@@ -442,61 +412,23 @@ void test_normalizer() {
     lie_algebra normalizer_actual_L5_2 = {L5_2_normalizer_basis, true};
     lie_algebra normalizer_actual_L5_4 = {L5_4_normalizer_basis, true};
     lie_algebra normalizer_actual_L5_5 = {L5_5_normalizer_basis, true};
-    lie_algebra normalizer_actual_test_1 = {test_1_normalizer_basis, true};
 
-    /*
+    
     mat_vec L5_4_basis = L5_4->get_basis();
     mat_vec out = lie_algebra::get_sl(L5_4->get_sl_size())->get_basis();
-    for (int i = 0; i < L5_4->get_dim(); i++) {              
-        g::matrix adx = L5_4->compute_normalizer_element1(L5_4_basis[i], out);
-        mat_vec extension = L5_4->compute_normalizer_element2(L5_4_basis[i], out);
-        g::matrix alpga2asl = L5_4->compute_normalizer_element3(L5_4_basis[i], out);
-        g::matrix alpga2aslminusone = L5_4->compute_normalizer_element4(L5_4_basis[i], out);
-        g::matrix padx = L5_4->compute_normalizer_element5(L5_4_basis[i], out);
-        mat_vec nullspasis = L5_4->compute_normalizer_element6(L5_4_basis[i], out);
-
-        std::cout << "adx" << std::endl;
-        utils::print_matrix(adx);
-        std::cout << "extension" << std::endl;
-        utils::print_matrices(extension);
-        std::cout << "alpga2asl" << std::endl;
-        utils::print_matrix(alpga2asl);
-        std::cout << "alpga2aslminusone" << std::endl;
-        utils::print_matrix(alpga2aslminusone);
-        std::cout << "padx" << std::endl;
-        utils::print_matrix(padx);
-        std::cout << "nullspasis" << std::endl;
-        utils::print_matrices(nullspasis);
-
-
-        // Updates out -> M_{i+1}  
-        out = L5_4->compute_normalizer_element(L5_4_basis[i], out);
-        
-        std::cout <<"nullspace as matrices" << std::endl;
-        utils::print_matrices(out);
-    }
-    */
-
-    mat_vec normalizer_test_basis = normalizer_test_1->get_basis();
-    utils::print_matrices(normalizer_test_basis);
     
-    if(! normalizer_actual_test_1.equals(normalizer_test_1)) {
-        throw std::invalid_argument("I normalizer goofed with test 1");
+
+    if(!normalizer_actual_L5_1.equals(normalizer_L5_1)) {
+        throw std::runtime_error("I normalizer goofed with L5_1");
     }
-    if(! normalizer_actual_L5_1.equals(normalizer_L5_1)) {
-        throw std::invalid_argument("I normalizer goofed with L5_1");
+    if(!normalizer_actual_L5_2.equals(normalizer_L5_2)) {
+        throw std::runtime_error("I normalizer goofed with L5_2");
     }
-    if(! normalizer_actual_L5_2.equals(normalizer_L5_2)) {
-        throw std::invalid_argument("I normalizer goofed with L5_2");
+    if(!normalizer_actual_L5_4.equals(normalizer_L5_4)) {
+        throw std::runtime_error("I normalizer goofed with L5_4");
     }
-    if(! normalizer_actual_L5_4.equals(normalizer_L5_4)) {
-        // mat_vec normalizer_basis = normalizer_L5_4->get_basis();
-        // utils::print_matrices(normalizer_basis);
-        // std::cout << normalizer_basis.size() << std::endl;
-        throw std::invalid_argument("I normalizer goofed with L5_4");
-    }
-    if(! normalizer_actual_L5_5.equals(normalizer_L5_5)) {
-        throw std::invalid_argument("I normalizer goofed with L5_5");
+    if(!normalizer_actual_L5_5.equals(normalizer_L5_5)) {
+        throw std::runtime_error("I normalizer goofed with L5_5");
     }
 }
 
@@ -525,7 +457,7 @@ void test_centralizer() {
     };
     
     mat_vec L5_4_cent_basis = {
-        {{0,  0,  1,  0}, {0,  1,  0,  1}, {0,  0,  0,  0}, {0,  0,  0,  0}},
+        {{0,  0,  1,  0}, {0,  0,  0,  1}, {0,  0,  0,  0}, {0,  0,  0,  0}},
         {{0,  0,  0,  1}, {0,  0,  0,  0}, {0,  0,  0,  0}, {0,  0,  0,  0}}
     };
 
@@ -541,64 +473,32 @@ void test_centralizer() {
     lie_algebra centralizer_actual_L5_5 = {L5_5_cent_basis, true};
     
     if(! centralizer_actual_L5_1.equals(centralizer_L5_1)) {
-        mat_vec v = centralizer_L5_1->get_basis();
-        utils::print_matrices(v);
-        throw std::invalid_argument("I centralizer goofed with L5_1");
+        throw std::runtime_error("I centralizer goofed with L5_1");
     }
     if(! centralizer_actual_L5_2.equals(centralizer_L5_2)) {
-        throw std::invalid_argument("I centralizer goofed with L5_2");
+        throw std::runtime_error("I centralizer goofed with L5_2");
     }
 
     if(! centralizer_actual_L5_4.equals(centralizer_L5_4)) {
-        throw std::invalid_argument("I centralizer goofed with L5_4");
+        throw std::runtime_error("I centralizer goofed with L5_4");
     }
     if(! centralizer_actual_L5_5.equals(centralizer_L5_5)) {
-        throw std::invalid_argument("I centralizer goofed with L5_5");
+        throw std::runtime_error("I centralizer goofed with L5_5");
     }
 }
-
-/*
-void benchmark_spanning_subsequence(){
-
-    std::srand(1984);
-
-    std::vector<g::matrix > v;
-    //g::symbol x("x");
-    
-
-
-    for(int i = 0; i < 100; i++){
-        g::matrix m(4,4);
-        for(int i = 0; i < 4; i++){
-            for(int j = 0; j < 4; j++){
-                m.set(i,j,std::rand()%10);
-
-            }
-        }
-        v.push_back(m);
-    }
-    //v[0].set(2,3,x);
-
-    v = lin_alg::spanning_subsequence(v);
-    std::cout<<v.size();
-
-
-
-}
-*/
 
 int main() {
+    // test_spanning_subsequence();
     // test_lie_alg_equals();
     // test_get_sl(6);
     // test_bracket_algebra_sl_sl(6);
     // test_get_normalizer_element();
-    // test_gaussian_elimination();
-    // test_nullspace();
-    // test_spanning_subsequence();
-    // test_sl_ize();
-    // test_matricize();
+    test_gaussian_elimination();
+    test_nullspace();
+    test_sl_ize();
+    test_matricize();
     test_normalizer();
-    // test_centralizer();
+    test_centralizer();
 
     // lie_algebra* alg = get_L5_1();
 
