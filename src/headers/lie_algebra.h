@@ -2,6 +2,7 @@
 #include "lin_alg.h"
 #include "utils.h"
 
+
 #ifndef JOEMATRIXCALC_LIEALGEBRA_H
 #define JOEMATRIXCALC_LIEALGEBRA_H
 
@@ -68,6 +69,8 @@ class lie_algebra { // We always refer the lie algebra we are working with L.
         /** Returns the lower central series series L^(n)=[L^(n-1), L^(n-1)] and stores it in this->centralizer. */
         std::vector< lie_algebra* > compute_lower_central_series(); // Returns the lower central series of the algebra of the whole Lie algebra until it stabilizes
 
+        std::pair<int, int> nilpotent_indices(); // out[0] is length of the derived series, out[1] is the length of the lower central series
+
         bool is_abelian(); // Checks if the algebra is abelian.
         bool is_solvable(); // Checks if the algebra is solvable.
         bool is_nilpotent(); // Checks if the algebra is nilpotent.
@@ -85,6 +88,9 @@ class lie_algebra { // We always refer the lie algebra we are working with L.
          * @return A basis of M extending the basis for L.
          */
         mat_vec extend_basis(lie_algebra* M);
+
+        int min_rank();
+        int max_rank();
 };
 
 

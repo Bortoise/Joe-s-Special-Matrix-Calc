@@ -117,24 +117,38 @@ namespace lin_alg{
         for(unsigned int i = 0; i < vectorized.size(); i++){
             for(unsigned int j = 0; j < vectorized[0].size(); j++){
                 temp.set(j,i, vectorized[i][j]);
-            
             }
         }
 
         temp = gaussian_elimination(temp);
+        // utils::print_matrix(temp);
         mat_vec rtn; 
-        int csd = 0;
-        for(int i = 0; i < temp.cols(); i++){
-            for(int j = csd; j < temp.rows(); j++){
-                if(!temp(j,i).is_zero()){
-                    csd++;
-                    rtn.push_back(matrices[i]);
-                    break;
-                }
-             
+
+        int col = 0;
+        int row = 0;
+
+        while (col < temp.cols() && row < temp.rows()) {
+            if(!temp(row, col).normal().is_zero()){
+                rtn.push_back(matrices[col]);
+                row++;
             }
-            
+            col++;
         }
+
+        // temp = gaussian_elimination(temp);
+        // mat_vec rtn; 
+        // int csd = 0;
+        // for(int i = 0; i < temp.cols(); i++){
+        //     for(int j = csd; j < temp.rows(); j++){
+        //         if(!temp(j,i).is_zero()){
+        //             csd++;
+        //             rtn.push_back(matrices[i]);
+        //             break;
+        //         }
+             
+        //     }
+            
+        // }
         return rtn;
 
     }
@@ -192,7 +206,7 @@ namespace lin_alg{
                     // Subtracts an appropriate multiple of the numNonZeroCols-th row from an appropriate multiple of the jth row
                     if (!temp_first_ex.is_zero()){
                         for (int k = 0; k < mat_temp.cols(); k++){ 
-                            mat_temp.set(j,k,(mat_temp(j,k) * pivot) - (mat_temp(numNonZeroCols,k) * temp_first_ex));
+                            mat_temp.set(j,k,((mat_temp(j,k) * pivot) - (mat_temp(numNonZeroCols,k) * temp_first_ex)).normal());
                         }
                     }
                 }

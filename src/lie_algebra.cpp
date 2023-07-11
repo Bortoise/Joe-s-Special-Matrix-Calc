@@ -1,5 +1,6 @@
 #include "headers/lie_algebra.h"
 
+
 // using namespace L;
 // namespace se = std::experimental;
 lie_algebra::lie_algebra(mat_vec generators, bool _basis) {
@@ -169,7 +170,12 @@ mat_vec lie_algebra::compute_normalizer_element(g::matrix x, mat_vec M) {
         alpha_to_sl.insert(alpha_to_sl.end(), temp_insert.begin(), temp_insert.end());
     }
 
+    assertm(alpha_to_sl.size() == sl_alg->get_dim() * sl_alg->get_dim(), "alpha_to_sl size is incorrect");
     g::matrix alpha_to_sl_matrix = lin_alg::matricize(alpha_to_sl, sl_alg->get_dim(), sl_alg->get_dim(), true);
+    assertm(alpha_to_sl_matrix.rows() == alpha_to_sl_matrix.cols(), "alpha_to_sl_matrix is not square");
+    std::string msg = "alpha_to_sl_matrix has rank " + std::to_string(lin_alg::rank(alpha_to_sl_matrix)) + " instead of " + std::to_string(alpha_to_sl_matrix.rows());
+    if (lin_alg::rank(alpha_to_sl_matrix) != alpha_to_sl_matrix.rows()) std::cout << msg << std::endl;
+    assert(lin_alg::rank(alpha_to_sl_matrix) == alpha_to_sl_matrix.rows());
     g::matrix sl_to_alpha = alpha_to_sl_matrix.inverse();
 
     // TODO: to save time we can precompute Id_{std_sl}^{alpha}, alpha, in compute_normalizer.
@@ -188,6 +194,28 @@ mat_vec lie_algebra::compute_normalizer_element(g::matrix x, mat_vec M) {
     
     return null_basis_matrices;
 }
+
+int min_rank(){
+    
+}
+
+int lie_algebra::max_rank() {
+    // Let M_1, ..., M_k be the basis of L.
+    mat_vec matrices = this-> basis;
+
+    // We set lin_comb = x_1 M_1 + ... + x_k M_k.
+    g::matrix lin_comb = {this->sl_size, this-> sl_size};
+    for(int i = 0; i < matrices.size(); i++){
+        g::symbol x_i("x_" + i);
+        lin_comb = lin_comb.add(matrices[i].mul_scalar(x_i));
+    }
+    // Because of algebraic geometry, the set of maximum rank elements will be open and so zariski (and classically) dense, so the max rank of L is the generic rank of the elements of L.
+    // So taking polynomial linear combinations of basis elements will give the generic rank since a polynomial vanishes as a function (over any infinite field) iff it vanishes as a polynomial.
+    // Thus max_rank(L) = rank of lin_comb as a matrix with entries in C[x_1,...,x_k];
+    int rank = lin_alg::rank(lin_comb);
+    return rank;    
+}
+
 
 lie_algebra* lie_algebra::bracket_with_sl() { // Needs to be changed if we decide to go the other way about making sl a static member
     lie_algebra* sl = get_sl(this->get_sl_size());
@@ -243,6 +271,10 @@ std::vector< lie_algebra* > lie_algebra::compute_lower_central_series() {
     
     this->derived_series = stdx::optional<std::vector< lie_algebra* >>(lower_central_series_out); // Records the lower central series 
     return std::vector(lower_central_series_out);
+}
+
+std::pair<int, int> lie_algebra::nilpotent_indices() {
+    return std::pair(this->compute_derived_series().size(), this->compute_lower_central_series().size());
 }
 
 bool lie_algebra::is_abelian() { return this->compute_derived_subalgebra()->get_dim() == 0; }
@@ -307,8 +339,14 @@ mat_vec lie_algebra::extend_basis(lie_algebra* M) {
     for(g::matrix v : M->basis) {
         vec_list.push_back(v);
     }
+    // std::reverse(vec_list.begin(), vec_list.end());
+    // utils::print_matrices(vec_list);
+    // std::reverse(vec_list.begin(), vec_list.end());
+    // mat_vec spannign_sdubsequence = lin_alg::spanning_subsequence(vec_list);
+    // utils::print_matrices(spannign_sdubsequence);
     return lin_alg::spanning_subsequence(vec_list);
 }
+
 
 mat_vec compute_centralizer_element(g::matrix x, mat_vec M) {
     if (M.empty()) {

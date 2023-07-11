@@ -6,6 +6,7 @@
 #include "headers/lie_algebra.h"
 #include <random>
 
+//TODO: Add tests for derived / central series, max_rank
 
 lie_algebra* get_L5_1() {
     g::matrix a = {{1,4,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,-3}};
@@ -42,6 +43,55 @@ lie_algebra* get_L5_5(g::symbol x) {
     std::vector< g::matrix> matrices = {a,b,c};
     lie_algebra* out = new lie_algebra(matrices);
     return out;
+}
+
+lie_algebra* get_L3_025_5() {
+    g::matrix m1 = {{-1, 0, 0, 0, 0, 2, 0, 0, 0, 0},
+                    {0,  1, 0,  0, 0, 0, 0, 0, 0, 0},
+                    {0,  0, -1, 0, 0, 0, 0, 0, 0, 0},
+                    {0,  0, 0,  1, 0, 0, 0, 0, 0, 0},
+                    {0,  0, 0,  0, 0, 0, 0, 1, 0, 0},
+                    {0,  0, 1,  0, 0, -1, 0, 0, 0, 0},
+                    {0,  0, 0,  0, 0, 0, 0, 0, 0, 1},
+                    {0,  0, 0,  0, 0, 0, 0, 0, 0, 0},
+                    {0,  0, 0,  0, 0, 0, 0, 0, 1, 0},
+                    {0,  0, 0,  0, 0, 0, 0, 0, 0, 0}};
+    g::matrix m2 = {{0, 0, 0, 0, 2, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 2, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 1, 0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 1, 1, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0, 1, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0, 1, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 1, 0, 0, 0, 0, 0, 0}};
+    g::matrix m3 = {{0, 0, 0, 0, 0, 0, 1, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0, 1, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+                    {0, 0, 0, 1, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
+    mat_vec basis = mat_vec {m1,m2,m3};
+    mat_vec brackets = {lin_alg::bracket(m1,m2), lin_alg::bracket(m2,m3), lin_alg::bracket(m1,m3)};
+    g::matrix M = lin_alg::bracket(m1,m2).add(m2).sub(m3);
+    utils::print_matrix(M);
+    //utils::print_matrices(brackets);
+    lie_algebra* L3 = new lie_algebra(basis);
+    return L3;
+}
+
+lie_algebra* get_L3_0_9a(g::symbol x){
+    g::matrix m1 = {{0, 0, 0, 0, 0, 0, 2, 0, 0, 0}, {0, 2, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -2, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0, 1, 0}, {0, 0, 0, 0, 0, -1, 0, 0, 0, 1}, {0, 0, 0, 1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 1, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, -1}};
+    g::matrix m2 = {{2*x, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 2*x+2, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, -6*x-2, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 2*x, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 2*x+1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, -2*x-1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 2*x, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, -2*x, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 2*x+1, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, -2*x-1}};
+    g::matrix m3 = {{0, 0, 0, 0, 2, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 1, 0, 0, 0, 0, 0, 0, 0, 0,}, {0, 0, 0, 0, 0, 0, 0, 1, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 1, 0},  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
+    mat_vec basis = {m1,m2,m3};
+    lie_algebra* L3_0_9a = new lie_algebra(basis);
+    return L3_0_9a;
 }
 
 void test_spanning_subsequence(){
@@ -366,12 +416,14 @@ void test_normalizer() {
     lie_algebra* L5_2 = get_L5_2();
     lie_algebra* L5_4 = get_L5_4(x);
     lie_algebra* L5_5 = get_L5_5(x);
+    lie_algebra* L3_0_9a = get_L3_0_9a(x);
     // lie_algebra* test_1 = get_test_alg_1();
 
     lie_algebra* normalizer_L5_1 = L5_1->compute_normalizer();
     lie_algebra* normalizer_L5_2 = L5_2->compute_normalizer();
     lie_algebra* normalizer_L5_4 = L5_4->compute_normalizer();
     lie_algebra* normalizer_L5_5 = L5_5->compute_normalizer();
+    lie_algebra* normalizer_L3_0_9a = L3_0_9a->compute_normalizer();
     // lie_algebra* normalizer_test_1 = test_1->compute_normalizer();
     
     mat_vec L5_1_normalizer_basis = {
@@ -412,11 +464,6 @@ void test_normalizer() {
     lie_algebra normalizer_actual_L5_2 = {L5_2_normalizer_basis, true};
     lie_algebra normalizer_actual_L5_4 = {L5_4_normalizer_basis, true};
     lie_algebra normalizer_actual_L5_5 = {L5_5_normalizer_basis, true};
-
-    
-    mat_vec L5_4_basis = L5_4->get_basis();
-    mat_vec out = lie_algebra::get_sl(L5_4->get_sl_size())->get_basis();
-    
 
     if(!normalizer_actual_L5_1.equals(normalizer_L5_1)) {
         throw std::runtime_error("I normalizer goofed with L5_1");
@@ -486,6 +533,8 @@ void test_centralizer() {
         throw std::runtime_error("I centralizer goofed with L5_5");
     }
 }
+
+
 
 int main() {
     // test_spanning_subsequence();

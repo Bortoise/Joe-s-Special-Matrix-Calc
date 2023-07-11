@@ -1,10 +1,15 @@
 #include <iostream>
 #include <vector>
+#include <utility>
+#include <cassert>
+#include <string>
 
 // see https://codereview.stackexchange.com/a/136373
 #pragma once
 
 #if __has_include(<optional>)
+
+#define assertm(exp, msg) assert(((void)(msg), exp))
 
 #   include <optional>
 namespace stdx {
