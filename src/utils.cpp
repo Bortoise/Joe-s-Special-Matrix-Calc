@@ -8,7 +8,7 @@ namespace utils{
     void print_matrix(g::matrix &m){
         for (int i = 0; i < m.rows(); i++){
             for (int j = 0; j < m.cols(); j++){
-                m(i,j).print(g::print_latex(std::cout));
+                m(i,j).print(g::print_python(std::cout));
                 std::cout<<"       ";
             }
             std::cout << std::endl;
@@ -19,7 +19,7 @@ namespace utils{
         for (g::exvector i : v){
             std::cout<<"(";
             for (std::vector<g::ex>::iterator j = i.begin(); j != i.end(); ++j){
-                j->print(g::print_latex(std::cout));
+                j->print(g::print_python(std::cout));
                 if (j != i.end()-1) std::cout<<", ";
             }
             std::cout<<")"<<std::endl;
@@ -29,7 +29,7 @@ namespace utils{
     void print_exvector(g::exvector &i){
         std::cout<<"(";
         for (std::vector<g::ex>::iterator j = i.begin(); j != i.end(); ++j){
-            j->print(g::print_latex(std::cout));
+            j->print(g::print_python(std::cout));
             if (j != i.end()-1) std::cout<<", ";
         }
         std::cout<<")"<<std::endl;
@@ -39,7 +39,7 @@ namespace utils{
         for (g::matrix m : v){
             std::cout<<"(";
             for (int i = 0; i < m.rows(); i++){
-                m(i,0).print(g::print_latex(std::cout));
+                m(i,0).print(g::print_python(std::cout));
                 if (i != m.rows()-1) std::cout<<", ";
             }
             std::cout<<")"<<std::endl;

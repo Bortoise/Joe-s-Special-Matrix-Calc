@@ -1,4 +1,4 @@
-CFLAGS :=  -std=c++17 -fPIC # do not include -fPIC if static library
+CFLAGS :=  -std=c++20 -fPIC # do not include -fPIC if static library
 LDFLAGS := -Wl,-Bstatic -lginac -lcln -lgmp -static-libstdc++ # this is more portable, but idk if it will work for all installs
 SOURCES=$(src/)
 HEADERS=$(src/headers/)
@@ -18,9 +18,14 @@ out/test.o: src/test.cpp out/library.so #out/library.a
 	$(CXX) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 #mv $@ out/$@
 
+out/example.o: src/example.cpp out/library.so #out/library.a
+	$(CXX) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+#mv $@ out/$@
+
 .PHONY: all test clear
 all: out/utils.o out/lin_alg.o out/lie_algebra.o out/library.so
 test: out/test.o
+example: out/example.o
 clear:
 	rm out/*
 #LieAlgebra.a: LieAlgebra.o
