@@ -158,7 +158,7 @@ mat_vec lie_algebra::compute_normalizer_element(g::matrix x, mat_vec M) {
     mat_vec alpha = this->extend_basis(sl_alg);
 
     // Let H be the span of the remaining basis elements of sl not in L. Let P (proj) be the projection onto H, in the basis alpha.
-    g::matrix proj = {sl_alg->get_dim(), sl_alg->get_dim()};
+    g::matrix proj = {static_cast<unsigned int>(sl_alg->get_dim()), static_cast<unsigned int>(sl_alg->get_dim())};
     for (int i = this->get_dim(); i < sl_alg->get_dim(); i++) {
         proj(i,i) = 1;
     }
@@ -204,7 +204,7 @@ int lie_algebra::max_rank() {
     mat_vec matrices = this-> basis;
 
     // We set lin_comb = x_1 M_1 + ... + x_k M_k.
-    g::matrix lin_comb = {this->sl_size, this-> sl_size};
+    g::matrix lin_comb = {static_cast<unsigned int>(this->sl_size), static_cast<unsigned int>(this-> sl_size)};
     for(int i = 0; i < matrices.size(); i++){
         g::symbol x_i("x_" + i);
         lin_comb = lin_comb.add(matrices[i].mul_scalar(x_i));
